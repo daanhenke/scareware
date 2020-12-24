@@ -60,7 +60,7 @@ bool sw::injector::ManualMappedLibraryLoader::AttemptInjection(DWORD process_id)
         LPVOID source = (LPVOID) ((LPBYTE) dllFileBuffer + sectionHeader[i].PointerToRawData);
         DWORD size = sectionHeader[i].SizeOfRawData;
         WriteProcessMemory(processHandle, target, source, size, nullptr);
-        std::cout << "\tCopying header:" << std::endl;
+        std::cout << "\tCopying section:" << std::endl;
         std::cout << "\t\tFrom:\t" << std::hex << source << std::endl;
         std::cout << "\t\tTo:\t" << std::hex << target << std::endl;
         std::cout << "\t\tSize:\t" << std::hex << size << std::endl;
