@@ -50,5 +50,31 @@ bool sw::injector::ManualMappedLibraryLoader::AttemptInjection(DWORD process_id)
     // TODO: MAYBE NOT DO THIS? TO AVOID THEM SHOWING IN RAM
     WriteProcessMemory(processHandle, remoteImage, dllFileBuffer, ntHeaders->OptionalHeader.SizeOfHeaders, nullptr);
 
+    // Create a pointer to the first section header
+    PIMAGE_SECTION_HEADER sectionHeader = (PIMAGE_SECTION_HEADER) (ntHeaders + 1);
+
+    // Copy all of the sections to our target process
+    for (WORD i = 0; i < ntHeaders->FileHeader.NumberOfSections; i++)
+    {
+        LPVOID target = (LPVOID) ((LPBYTE) remoteImage + sectionHeader[i].VirtualAddress);
+        LPVOID source = (LPVOID) ((LPBYTE) dllFileBuffer + sectionHeader[i].PointerToRawData);
+        DWORD size = sectionHeader[i].SizeOfRawData;
+        WriteProcessMemory(processHandle, target, source, size, nullptr);
+        std::cout << "\tCopying header:" << std::endl;
+        std::cout << "\t\tFrom:\t" << std::hex << source << std::endl;
+        std::cout << "\t\tTo:\t" << std::hex << target << std::endl;
+        std::cout << "\t\tSize:\t" << std::hex << size << std::endl;
+    }
+
+    // Allocate memory for our stage1
+    LPVOID remoteStage1 = VirtualAllocEx(processHandle, nullptr, 4096, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+
+    // Deallocate stage 1 in target process
+    VirtualFreeEx(processHandle, remoteStage1, 0, MEM_RELEASE);
+
+    // Clean up handles
+    CloseHandle(processHandle);
+    CloseHandle(dllFileHandle);
+
     return true;
 }
