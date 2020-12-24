@@ -237,11 +237,11 @@ bool sw::injector::ManualMappedLibraryLoader::AttemptInjection(DWORD process_id)
     std::cout << "Done! Cleaning up..." << std::endl;
 
     // Deallocate relocation func in target process
-    // VirtualFreeEx(processHandle, remoteRelocator, 0, MEM_RELEASE);
+    VirtualFreeEx(processHandle, remoteRelocator, 0, MEM_RELEASE);
 
     // Clean up handles
-    //CloseHandle(processHandle);
-    //CloseHandle(dllFileHandle);
+    CloseHandle(processHandle);
+    CloseHandle(dllFileHandle);
 
     return true;
 }
