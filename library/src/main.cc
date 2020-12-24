@@ -2,6 +2,11 @@
 
 INT DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpData)
 {
-    MessageBoxA(nullptr, "Yeet", "Yote", MB_OK);
+    switch (dwReason)
+    {
+        case DLL_PROCESS_ATTACH:
+            MessageBoxA(nullptr, "Yeet", "Yote", MB_OK);
+            break;
+    }
     return 0;
 }

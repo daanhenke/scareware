@@ -7,4 +7,6 @@ target_sources(scareware
         src/main.cc
 )
 
+target_link_options(scareware PRIVATE "/GS-")
+
 target_include_directories(scareware PUBLIC include)

@@ -9,6 +9,6 @@ target_sources(scareinjector
         src/ManualMappedLibraryLoader.cc
 )
 
-set_target_properties(scareinjector PROPERTIES COMPILE_FLAGS "/Zc:wchar_t-")
+target_compile_options(scareinjector PRIVATE "/GS-")
 
 target_include_directories(scareinjector PUBLIC include)

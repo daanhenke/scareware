@@ -18,10 +18,10 @@ typedef struct {
     pEntrypoint fnEntrypoint;
 } relocation_data_t;
 
-// Function which will get copied into target process to relocate the injected dll & fix the import descriptors
-extern "C" {
+#pragma runtime_checks("", off)
 
-DWORD WINAPI relocation(LPVOID relocation_ptr) {
+// Function which will get copied into target process to relocate the injected dll & fix the import descriptors
+static __declspec(noinline) DWORD __stdcall relocation(LPVOID relocation_ptr) {
     // Get the data object our injector provided
     relocation_data_t* data = (relocation_data_t*) relocation_ptr;
 
@@ -34,19 +34,22 @@ DWORD WINAPI relocation(LPVOID relocation_ptr) {
     // For every valid block (last block will have 0 address)
     while (relocationBlock->VirtualAddress)
     {
-        DWORD count = relocationBlock->SizeOfBlock - sizeof(IMAGE_BASE_RELOCATION) / sizeof(WORD);
-        PWORD list = (PWORD) (relocationBlock + 1);
-
-        for (DWORD i = 0; i < count; i++)
+        if (relocationBlock->SizeOfBlock >= sizeof(IMAGE_BASE_RELOCATION))
         {
-            if (list[i] != 0)
+            int count = (relocationBlock->SizeOfBlock - sizeof(IMAGE_BASE_RELOCATION)) / sizeof(WORD);
+            PWORD list = (PWORD) (relocationBlock + 1);
+
+            for (int i = 0; i < count; i++)
             {
-                // Correct every symbol in the relocation block by adding the delta we calculated beforehand
-                PDWORD ptr = (PDWORD) ((LPBYTE) data->base + (relocationBlock->VirtualAddress + (list[i] & 0xFFF)));
-                *ptr += delta;
+                if (list[i])
+                {
+                    // Correct every symbol in the relocation block by adding the delta we calculated beforehand
+                    PDWORD ptr = (PDWORD) ((LPBYTE) data->base + (relocationBlock->VirtualAddress + (list[i] & 0xFFF)));
+                    *ptr += delta;
+                }
             }
         }
-
+        
         // Get next block
         relocationBlock = (PIMAGE_BASE_RELOCATION) ((LPBYTE) relocationBlock + relocationBlock->SizeOfBlock);
     }
@@ -55,7 +58,7 @@ DWORD WINAPI relocation(LPVOID relocation_ptr) {
     PIMAGE_IMPORT_DESCRIPTOR importDescriptor = data->import_descriptor;
 
     // For every valid import descriptor (last one will have 0 characteristics)
-    while (importDescriptor->Characteristics != 0)
+    while (importDescriptor->Characteristics)
     {
         PIMAGE_THUNK_DATA originalThunk = (PIMAGE_THUNK_DATA) ((LPBYTE) data->base + importDescriptor->OriginalFirstThunk);
         PIMAGE_THUNK_DATA newThunk = (PIMAGE_THUNK_DATA) ((LPBYTE) data->base + importDescriptor->FirstThunk);
@@ -74,7 +77,7 @@ DWORD WINAPI relocation(LPVOID relocation_ptr) {
             // Import this symbol by ordinal
             if (originalThunk->u1.Ordinal & IMAGE_ORDINAL_FLAG)
             {
-                DWORD ptr = (DWORD) data->fnGetProcAddress(moduleHandle, (LPCSTR) (originalThunk->u1.Ordinal & 0xFFFF));
+                ULONGLONG ptr = (ULONGLONG) data->fnGetProcAddress(moduleHandle, (LPCSTR) (originalThunk->u1.Ordinal & 0xFFFF));
 
                 if (ptr == 0)
                 {
@@ -87,7 +90,7 @@ DWORD WINAPI relocation(LPVOID relocation_ptr) {
             else
             {
                 PIMAGE_IMPORT_BY_NAME byName = (PIMAGE_IMPORT_BY_NAME) ((LPBYTE) data->base + originalThunk->u1.AddressOfData);
-                DWORD ptr = (DWORD) data->fnGetProcAddress(moduleHandle, (LPCSTR) byName->Name);
+                ULONGLONG ptr = (ULONGLONG) data->fnGetProcAddress(moduleHandle, (LPCSTR) byName->Name);
 
                 if (ptr == 0)
                 {
@@ -114,11 +117,12 @@ DWORD WINAPI relocation(LPVOID relocation_ptr) {
 }
 
 // This function does not actually do anything, but (relocation_end - relocation) can now be used to calculate the size of the relocation function
-DWORD WINAPI relocation_end()
+static __declspec(noinline) DWORD WINAPI relocation_end()
 {
     return 0;
 }
-}
+
+#pragma runtime_checks("", on)
 
 sw::injector::ManualMappedLibraryLoader::ManualMappedLibraryLoader(std::filesystem::path dll_path) : ILibraryLoader(dll_path)
 {
@@ -187,7 +191,7 @@ bool sw::injector::ManualMappedLibraryLoader::AttemptInjection(DWORD process_id)
     }
 
     // Allocate memory for our relocation function
-    LPVOID remoteRelocator = VirtualAllocEx(processHandle, nullptr, 4096, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+    LPVOID remoteRelocator = VirtualAllocEx(processHandle, nullptr, 4092, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
     std::cout << "\tRelocation Data:\t" << std::hex << remoteRelocator << std::endl;
 
     // Create all the necessary data for our relocation function
@@ -211,7 +215,9 @@ bool sw::injector::ManualMappedLibraryLoader::AttemptInjection(DWORD process_id)
     }
 
     std::cout << "\tRelocation Function:\t" << std::hex << ((relocation_data_t*) remoteRelocator + 1) << std::endl;
-    std::cout << "\tRelocation Function Size:\t" << std::hex << ((DWORD) relocation_end - (DWORD) relocation) << std::endl;
+    std::cout << "\tRelocation Function (Injector Process):\t" << std::hex << relocation << std::endl;
+    std::cout << "\tRelocation End Function (Injector Process):\t" << std::hex << relocation_end << std::endl;
+    std::cout << "\tRelocation Function Size:\t" << std::hex << ((LONG) relocation_end - (LONG) relocation) << std::endl;
     std::cout << "\tLibrary Entrypoint:\t" << std::hex << relocation_data.fnEntrypoint << std::endl;
     std::cout << "\tLoadLibraryA:\t" << std::hex << relocation_data.fnLoadLibrary << std::endl;
     std::cout << "\tGetProcAddress:\t" << std::hex << relocation_data.fnGetProcAddress << std::endl;
@@ -231,11 +237,11 @@ bool sw::injector::ManualMappedLibraryLoader::AttemptInjection(DWORD process_id)
     std::cout << "Done! Cleaning up..." << std::endl;
 
     // Deallocate relocation func in target process
-    VirtualFreeEx(processHandle, remoteRelocator, 0, MEM_RELEASE);
+    // VirtualFreeEx(processHandle, remoteRelocator, 0, MEM_RELEASE);
 
     // Clean up handles
-    CloseHandle(processHandle);
-    CloseHandle(dllFileHandle);
+    //CloseHandle(processHandle);
+    //CloseHandle(dllFileHandle);
 
     return true;
 }
