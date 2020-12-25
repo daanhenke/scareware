@@ -12,7 +12,7 @@ void Initialize()
     sw::console::Destroy();
 }
 
-INT DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpData)
+BOOL WINAPI DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpData)
 {
     switch (dwReason)
     {

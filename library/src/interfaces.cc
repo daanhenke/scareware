@@ -5,6 +5,8 @@
 sw::iface::IBaseClientDLL*      sw::interfaces::IBaseClientDLL = nullptr;
 sw::iface::ICvar*               sw::interfaces::ICvar = nullptr;
 sw::iface::IPanel*              sw::interfaces::IPanel = nullptr;
+sw::iface::ISurface*            sw::interfaces::ISurface = nullptr;
+sw::iface::IInputSystem*        sw::interfaces::IInputSystem = nullptr;
 
 template<typename T>
 inline T* GetInterface(const char* partial_interface_name, const char* module_name)
@@ -41,8 +43,8 @@ bool sw::interfaces::FindInterfaces()
     IBaseClientDLL = GetInterface<iface::IBaseClientDLL>("VClient", "client.dll");
     ICvar = GetInterface<iface::ICvar>("VEngineCvar", "vstdlib.dll");
     IPanel = GetInterface<iface::IPanel>("VGUI_Panel", "vgui2.dll");
-
-    console::WriteFormat("Client offset: %x\n", IBaseClientDLL);
+    ISurface = GetInterface<iface::ISurface>("VGUI_Surface", "vguimatsurface.dll");
+    IInputSystem = GetInterface<iface::IInputSystem>("InputSystemVersion", "inputsystem.dll");
     
     ICvar->ConsoleDPrintf("fakka nifje: %d\n", 1337);
 
