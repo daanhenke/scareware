@@ -31,12 +31,14 @@ namespace sw::iface
             CALL_MEMBER(DrawFilledRect_t, this, 16, x1, y1, x2, y2);
         }
 
+        // TODO: Make work plz
         void DrawSetTextPos(int x, int y)
         {
             DEFINE_MEMBER(__thiscall* DrawSetTextPos_t, void, int, int);
             CALL_MEMBER(DrawSetTextPos_t, this, 23, x, y);
         }
 
+        // TODO: Make work plz
         void DrawPrintText(const wchar_t* text, int textLen, FontDrawType_t drawType = FONT_DRAW_DEFAULT)
         {
             DEFINE_MEMBER(__thiscall* DrawPrintText_t, void, const wchar_t*, int, FontDrawType_t);

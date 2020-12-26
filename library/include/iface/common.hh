@@ -15,3 +15,6 @@ namespace sw::iface
 
 #define DEFINE_MEMBER(name, returnType, ...) typedef returnType (name)(void*, __VA_ARGS__ )
 #define CALL_MEMBER(name, instance, index, ...) sw::iface::GetVirtualFunction<name>(instance, index)(instance, __VA_ARGS__)
+
+#define DEFINE_MEMBER_GETTER(name, returnType) typedef returnType (name)(void*)
+#define CALL_MEMBER_GETTER(name, instance, index) sw::iface::GetVirtualFunction<name>(instance, index)(instance)

@@ -110,7 +110,7 @@ static __declspec(noinline) DWORD __stdcall relocation(LPVOID relocation_ptr) {
     // Check if the library contains an entrypoint
     if (data->fnEntrypoint != 0)
     {
-        data->fnEntrypoint((HMODULE) data->base, DLL_PROCESS_ATTACH, nullptr);
+        data->fnEntrypoint((HMODULE) data->base, DLL_PROCESS_ATTACH, data->base);
     }
 
     return 1;

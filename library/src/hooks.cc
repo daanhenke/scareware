@@ -1,9 +1,11 @@
 #include "hooks.hh"
 #include "interfaces.hh"
 #include "console.hh"
+#include "logic.hh"
 
 sw::vtable::VTableHook* sw::hooks::IBaseClientDLL = nullptr;
 sw::vtable::VTableHook* sw::hooks::IPanel = nullptr;
+sw::vtable::VTableHook* sw::hooks::ClientModeShared = nullptr;
 
 sw::hooks::PaintTraverseFn oPaintTraverse;
 void __fastcall pt_hook(void* pPanels, int edx, unsigned int vguiPanel, bool forceRepaint, bool allowForce)
@@ -25,8 +27,21 @@ void __fastcall pt_hook(void* pPanels, int edx, unsigned int vguiPanel, bool for
     // Call the original function
     oPaintTraverse(pPanels, vguiPanel, forceRepaint, allowForce);
 
+    if (uiPanelId == 0 || uiPanelId != vguiPanel)
+    {
+        return;
+    }
+
     // Handling input in the render func, bad...
     shouldDrawUi = sw::interfaces::IInputSystem->IsButtonDown(sw::iface::ButtonCode_t::KEY_INSERT);
+
+    // Uninject method
+    if (sw::interfaces::IInputSystem->IsButtonDown(sw::iface::ButtonCode_t::KEY_END))
+    {
+        sw::logic::UnloadSelf();
+    }
+
+    sw::interfaces::ICvar->ConsoleDPrintf("Currently in game: %s", sw::interfaces::IVEngineClient->IsInGame() ? "Yes" : "No :(");
 
     // Draw some random shit
     if (uiPanelId != 0 && vguiPanel == uiPanelId && shouldDrawUi)
@@ -39,13 +54,23 @@ void __fastcall pt_hook(void* pPanels, int edx, unsigned int vguiPanel, bool for
     }
 }
 
+sw::hooks::CreateMoveFn oCreateMove;
+void __stdcall cm_hook(float frametime, sw::iface::CUserCmd* pCmd)
+{
+    oCreateMove(sw::interfaces::ClientModeShared, frametime, pCmd);
+    pCmd->buttons ^= sw::iface::IN_FORWARD | sw::iface::IN_BACK | sw::iface::IN_MOVELEFT | sw::iface::IN_MOVERIGHT;
+}
+
 void sw::hooks::HookAll()
 {
     IBaseClientDLL = new vtable::VTableHook((DWORD*) interfaces::IBaseClientDLL);
     IPanel = new vtable::VTableHook((DWORD*) interfaces::IPanel);
+    ClientModeShared = new vtable::VTableHook((DWORD*) interfaces::ClientModeShared);
 
     oPaintTraverse = (PaintTraverseFn) IPanel->HookMethod((DWORD) &pt_hook, 41);
     sw::interfaces::ICvar->ConsoleDPrintf("oPaintTraverse: %x\n", oPaintTraverse);
+
+    oCreateMove = (CreateMoveFn) ClientModeShared->HookMethod((DWORD) &cm_hook, 24);
 }
 
 void sw::hooks::UnhookAll()
