@@ -7,12 +7,8 @@
 void Initialize()
 {
     sw::console::Create();
-    //sw::interfaces::FindInterfaces();
-    //sw::hooks::HookAll();
-    
-    Sleep(2000);
-    MessageBoxA(nullptr, "Unloading", "Yeet", MB_OK);
-    sw::logic::UnloadSelf();
+    sw::interfaces::FindInterfaces();
+    sw::hooks::HookAll();
 }
 
 BOOL WINAPI DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpBaseAddress)

@@ -224,5 +224,11 @@ namespace sw::iface
             DEFINE_MEMBER(__thiscall* IsButtonDown_t, bool, ButtonCode_t);
             return CALL_MEMBER(IsButtonDown_t, this, 15, code);
         }
+
+        int GetJoystickCount()
+        {
+            DEFINE_MEMBER_GETTER(__thiscall* GetJoystickCount_t, int);
+            return CALL_MEMBER_GETTER(GetJoystickCount_t, this, 23);
+        }
     };
 }

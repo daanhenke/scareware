@@ -1,5 +1,7 @@
 #include <Windows.h>
 #include "logic.hh"
+#include "hooks.hh"
+#include "console.hh"
 
 /*
     Unloads our code, since it isn't a real module anyway all we need to do is free the memory we use
@@ -30,6 +32,9 @@ DWORD WINAPI HackyUnload(LPVOID lpParam)
 
 void sw::logic::UnloadSelf()
 {
+    hooks::UnhookAll();
+    console::Destroy();
+
     CreateThread(nullptr, 0, HackyUnload, nullptr, 0, nullptr);
 }
 

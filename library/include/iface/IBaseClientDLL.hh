@@ -7,5 +7,5 @@ namespace sw::iface
     class IBaseClientDLL
     {
         
-    };    
+    };
 }

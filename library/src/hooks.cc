@@ -77,4 +77,5 @@ void sw::hooks::UnhookAll()
 {
     IBaseClientDLL->RestoreOld();
     IPanel->RestoreOld();
+    ClientModeShared->RestoreOld();
 }
