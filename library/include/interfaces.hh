@@ -9,6 +9,7 @@
 #include "iface/IInputSystem.hh"
 #include "iface/ClientModeShared.hh"
 #include "iface/IVEngineClient.hh"
+#include "iface/IClientEntityList.hh"
 
 namespace sw::interfaces
 {
@@ -21,4 +22,5 @@ namespace sw::interfaces
     extern iface::IInputSystem* IInputSystem;
     extern iface::ClientModeShared* ClientModeShared;
     extern iface::IVEngineClient* IVEngineClient;
+    extern iface::IClientEntityList* IClientEntityList;
 }

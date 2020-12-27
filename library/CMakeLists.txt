@@ -11,6 +11,7 @@ target_sources(scareware
         src/VTableHook.cc
         src/hooks.cc
         src/logic.cc
+        src/util.cc
 )
 
 target_include_directories(scareware PUBLIC include)

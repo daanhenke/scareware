@@ -10,7 +10,8 @@ sw::iface::IPanel*              sw::interfaces::IPanel = nullptr;
 sw::iface::ISurface*            sw::interfaces::ISurface = nullptr;
 sw::iface::IInputSystem*        sw::interfaces::IInputSystem = nullptr;
 sw::iface::ClientModeShared*    sw::interfaces::ClientModeShared = nullptr;
-sw::iface::IVEngineClient*    sw::interfaces::IVEngineClient = nullptr;
+sw::iface::IVEngineClient*      sw::interfaces::IVEngineClient = nullptr;
+sw::iface::IClientEntityList*   sw::interfaces::IClientEntityList = nullptr;
 
 // Private map used for printing all the interface pointers
 std::map<std::string, uintptr_t> _iface_ptr_map;
@@ -66,12 +67,13 @@ void PrintInterfaces()
 bool sw::interfaces::FindInterfaces()
 {
     // Load all interfaces from their factory functions
-    IBaseClientDLL = GetInterface<iface::IBaseClientDLL>("VClient0", "client.dll");
-    ICvar = GetInterface<iface::ICvar>("VEngineCvar", "vstdlib.dll");
-    IPanel = GetInterface<iface::IPanel>("VGUI_Panel", "vgui2.dll");
-    ISurface = GetInterface<iface::ISurface>("VGUI_Surface", "vguimatsurface.dll");
-    IInputSystem = GetInterface<iface::IInputSystem>("InputSystemVersion", "inputsystem.dll");
-    IVEngineClient = GetInterface<iface::IVEngineClient>("VEngineClient", "engine.dll");
+    IBaseClientDLL = GetInterface<iface::IBaseClientDLL>("VClient0", "client");
+    ICvar = GetInterface<iface::ICvar>("VEngineCvar", "vstdlib");
+    IPanel = GetInterface<iface::IPanel>("VGUI_Panel", "vgui2");
+    ISurface = GetInterface<iface::ISurface>("VGUI_Surface", "vguimatsurface");
+    IInputSystem = GetInterface<iface::IInputSystem>("InputSystemVersion", "inputsystem");
+    IVEngineClient = GetInterface<iface::IVEngineClient>("VEngineClient", "engine");
+    IClientEntityList = GetInterface<iface::IClientEntityList>("VClientEntityList", "client");
     
     // These interfaces don't have one, get them using magic instead
     ClientModeShared = **reinterpret_cast<iface::ClientModeShared ***>( ( *reinterpret_cast<uintptr_t **>( IBaseClientDLL ) )[ 10 ] + 0x5 );
