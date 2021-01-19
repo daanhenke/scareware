@@ -3,11 +3,13 @@
 #include "console.hh"
 #include "hooks.hh"
 #include "logic.hh"
+#include "netvars.hh"
 
 void Initialize()
 {
     sw::console::Create();
     sw::interfaces::FindInterfaces();
+    sw::netvars::manager = new sw::netvars::NetvarManager();
     sw::hooks::HookAll();
 }
 

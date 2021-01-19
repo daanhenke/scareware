@@ -12,6 +12,9 @@ sw::iface::IInputSystem*        sw::interfaces::IInputSystem = nullptr;
 sw::iface::ClientModeShared*    sw::interfaces::ClientModeShared = nullptr;
 sw::iface::IVEngineClient*      sw::interfaces::IVEngineClient = nullptr;
 sw::iface::IClientEntityList*   sw::interfaces::IClientEntityList = nullptr;
+sw::iface::IClientEntity**      sw::interfaces::LocalPlayer = nullptr;
+sw::iface::CInput*              sw::interfaces::CInput = nullptr;
+sw::iface::CGlowObjectManager*  sw::interfaces::CGlowObjectManager = nullptr;
 
 // Private map used for printing all the interface pointers
 std::map<std::string, uintptr_t> _iface_ptr_map;
@@ -78,8 +81,23 @@ bool sw::interfaces::FindInterfaces()
     // These interfaces don't have one, get them using magic instead
     ClientModeShared = **reinterpret_cast<iface::ClientModeShared ***>( ( *reinterpret_cast<uintptr_t **>( IBaseClientDLL ) )[ 10 ] + 0x5 );
     _iface_ptr_map["ClientModeShared"] = (uintptr_t) ClientModeShared;
+
+    LocalPlayer = *reinterpret_cast<iface::IClientEntity***>(memory::FindPattern("client", "\xA1????\x89\x45\xBC\x85\xC0") + 1);
+    _iface_ptr_map["LocalPlayer"] = (uintptr_t)LocalPlayer;
+
+    CInput = *reinterpret_cast<iface::CInput**>((*reinterpret_cast<uintptr_t**>(IBaseClientDLL))[16] + 1);
+    _iface_ptr_map["CInput"] = (uintptr_t)CInput;
+
+    CGlowObjectManager = *reinterpret_cast<iface::CGlowObjectManager**>(memory::FindPattern("client", "\x0F\x11\x05????\x83\xC8\x01") + 3);
+    _iface_ptr_map["CGlowObjectManager"] = (uintptr_t)CGlowObjectManager;
     
     PrintInterfaces();
 
     return true;
+}
+
+sw::iface::IClientEntity* sw::interfaces::GetLocalPlayer()
+{
+    //console::WriteColorFormat(FOREGROUND_RED, "Local Player idx: %x\n", IVEngineClient->GetLocalPlayer());
+    return IClientEntityList->GetClientEntity(IVEngineClient->GetLocalPlayer());
 }

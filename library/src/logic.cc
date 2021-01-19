@@ -32,6 +32,7 @@ DWORD WINAPI HackyUnload(LPVOID lpParam)
 
 void sw::logic::UnloadSelf()
 {
+    console::WriteFormat("Goodbye!\n");
     hooks::UnhookAll();
     console::Destroy();
 

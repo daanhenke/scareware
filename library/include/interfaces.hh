@@ -10,6 +10,8 @@
 #include "iface/ClientModeShared.hh"
 #include "iface/IVEngineClient.hh"
 #include "iface/IClientEntityList.hh"
+#include "iface/CInput.hh"
+#include "iface/CGlowObjectManager.hh"
 
 namespace sw::interfaces
 {
@@ -23,4 +25,9 @@ namespace sw::interfaces
     extern iface::ClientModeShared* ClientModeShared;
     extern iface::IVEngineClient* IVEngineClient;
     extern iface::IClientEntityList* IClientEntityList;
+    extern iface::IClientEntity** LocalPlayer;
+    extern iface::CInput* CInput;
+    extern iface::CGlowObjectManager* CGlowObjectManager;
+
+    iface::IClientEntity* GetLocalPlayer();
 }

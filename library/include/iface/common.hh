@@ -1,5 +1,7 @@
 #pragma once
 
+#include "netvars.hh"
+
 namespace sw::iface
 {
     typedef void* (__cdecl* CreateInterfaceFn)(const char*, int*);

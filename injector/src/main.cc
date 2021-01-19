@@ -6,7 +6,7 @@
 
 void usage(std::string name)
 {
-    std::cout << "no hablo espagnol" << std::endl
+    std::cout << "no hablo espagnol hermano" << std::endl
     << std::endl
     << name << " process.exe path/to/library.dll" << std::endl;
 }

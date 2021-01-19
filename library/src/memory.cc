@@ -3,6 +3,7 @@
 
 #include <map>
 #include <string>
+#include <array>
 
 std::map<std::string, DWORD> _mod_handle_map;
 
@@ -53,6 +54,54 @@ DWORD sw::memory::FindTextInModule(const char* module_name, const char* text)
         }
     }
 
+
+    return 0;
+}
+
+[[nodiscard]] static auto generateBadCharTable(std::string_view pattern) noexcept
+{
+    std::array<std::size_t, (std::numeric_limits<std::uint8_t>::max)() + 1> table;
+
+    auto lastWildcard = pattern.rfind('?');
+    if (lastWildcard == std::string_view::npos)
+        lastWildcard = 0;
+
+    const auto defaultShift = (std::max)(std::size_t(1), pattern.length() - 1 - lastWildcard);
+    table.fill(defaultShift);
+
+    for (auto i = lastWildcard; i < pattern.length() - 1; ++i)
+        table[static_cast<std::uint8_t>(pattern[i])] = pattern.length() - 1 - i;
+
+    return table;
+}
+
+DWORD sw::memory::FindPattern(const char* module_name, std::string pattern)
+{
+    static auto id = 0;
+    id++;
+
+    HMODULE handle = GetModuleHandleA(module_name);
+    MODULEINFO moduleInfo;
+    BOOL res = GetModuleInformation(GetCurrentProcess(), handle, &moduleInfo, sizeof(MODULEINFO));
+
+    if (!res) return 0;
+
+    const auto lastIndex = pattern.length() - 1;
+    const auto badCharTable = generateBadCharTable(pattern);
+
+    const char* start = static_cast<const char*>(moduleInfo.lpBaseOfDll);
+    const char* end = start + moduleInfo.SizeOfImage - pattern.length();
+
+    while (start <= end)
+    {
+        int i = lastIndex;
+
+        while (i >= 0 && (pattern[i] == '?' || start[i] == pattern[i])) i--;
+
+        if (i < 0) return reinterpret_cast<DWORD>(start);
+
+        start += badCharTable[static_cast<std::uint8_t>(start[lastIndex])];
+    }
 
     return 0;
 }

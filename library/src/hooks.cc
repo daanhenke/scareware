@@ -3,6 +3,8 @@
 #include "console.hh"
 #include "logic.hh"
 #include "util.hh"
+#include "hacks/skin.hh"
+#include "hacks/misc.hh"
 
 sw::vtable::VTableHook* sw::hooks::IBaseClientDLL = nullptr;
 sw::vtable::VTableHook* sw::hooks::IPanel = nullptr;
@@ -97,13 +99,13 @@ void __fastcall pt_hook(void* pPanels, int edx, unsigned int vguiPanel, bool for
             sw::iface::IClientEntity* entity = sw::interfaces::IClientEntityList->GetClientEntity(entIndex);
 
             if (entity == nullptr) continue;
-            sw::iface::IClientNetworkable* networkable = entity->GetClientNetworkable();
-            if (networkable == nullptr) continue;
+            //sw::iface::IClientNetworkable* networkable = entity->GetClientNetworkable();
+            //if (networkable == nullptr) continue;
 
-            sw::interfaces::ICvar->ConsoleDPrintf("Entity '%x' dormant: %s\n", entIndex, networkable->IsDormant() ? "ye" : "na");
+            //sw::interfaces::ICvar->ConsoleDPrintf("Entity '%x' dormant: %s\n", entIndex, networkable->IsDormant() ? "ye" : "na");
 
-            sw::iface::C_BaseEntity* base = entity->GetBaseEntity();
-            if (base == nullptr) continue;
+            //sw::iface::C_BaseEntity* base = entity->GetBaseEntity();
+            //if (base == nullptr) continue;
 
             sw::iface::Vector pos3d; //= entity->GetEyePosition();
             pos3d.x = 0;
@@ -125,10 +127,31 @@ void __fastcall pt_hook(void* pPanels, int edx, unsigned int vguiPanel, bool for
 }
 
 sw::hooks::CreateMoveFn oCreateMove;
-void __stdcall cm_hook(float frametime, sw::iface::CUserCmd* pCmd)
+bool __stdcall cm_hook(float frametime, sw::iface::CUserCmd* pCmd)
 {
-    oCreateMove(sw::interfaces::ClientModeShared, frametime, pCmd);
-    pCmd->buttons ^= sw::iface::IN_FORWARD | sw::iface::IN_BACK | sw::iface::IN_MOVELEFT | sw::iface::IN_MOVERIGHT;
+    bool res = oCreateMove(sw::interfaces::ClientModeShared, frametime, pCmd);
+
+    if (!pCmd->command_number) return res;
+
+    sw::hacks::misc::Bunnyhop(pCmd);
+
+    return false;
+}
+
+sw::hooks::FrameStageNotifyFn oFrameStageNotify;
+void __fastcall fsn_hook(void* _this, int edx, sw::iface::FrameStage stage)
+{
+    if (sw::interfaces::IVEngineClient->IsInGame())
+    {
+        if (stage == sw::iface::FrameStage::NET_UPDATE_POSTDATAUPDATE_START)
+        {
+            sw::hacks::skin::FrameStageNotify();
+            sw::hacks::misc::ThirdPerson();
+            sw::hacks::misc::GlowPlayers();
+        }
+    }
+
+    oFrameStageNotify(sw::interfaces::IBaseClientDLL, edx, stage);
 }
 
 void sw::hooks::HookAll()
@@ -141,6 +164,8 @@ void sw::hooks::HookAll()
     sw::interfaces::ICvar->ConsoleDPrintf("oPaintTraverse: %x\n", oPaintTraverse);
 
     oCreateMove = (CreateMoveFn) ClientModeShared->HookMethod((DWORD) &cm_hook, 24);
+
+    oFrameStageNotify = (FrameStageNotifyFn)IBaseClientDLL->HookMethod((DWORD)&fsn_hook, 37);
 }
 
 void sw::hooks::UnhookAll()

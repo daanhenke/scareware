@@ -12,6 +12,9 @@ target_sources(scareware
         src/hooks.cc
         src/logic.cc
         src/util.cc
+        src/netvars.cc
+        src/hacks/skin.cc
+        src/hacks/misc.cc
 )
 
 target_include_directories(scareware PUBLIC include)

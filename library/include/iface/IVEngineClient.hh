@@ -20,9 +20,15 @@ namespace sw::iface
             return CALL_MEMBER_GETTER(GetLocalPlayer_t, this, 12);
         }
 
+        void GetViewAngles(Vector& angles)
+        {
+            DEFINE_MEMBER(__thiscall * GetViewAngles_t, void, Vector&);
+            return CALL_MEMBER(GetViewAngles_t, this, 18, std::ref(angles));
+        }
+
         bool IsInGame()
         {
-            DEFINE_MEMBER_GETTER(__thiscall* IsInGame_t, bool);
+            DEFINE_MEMBER_GETTER(__thiscall * IsInGame_t, bool);
             return CALL_MEMBER_GETTER(IsInGame_t, this, 26);
         }
 

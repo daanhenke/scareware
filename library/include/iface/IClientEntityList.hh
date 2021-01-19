@@ -10,8 +10,20 @@ namespace sw::iface
     public:
         IClientEntity* GetClientEntity(int entnum)
         {
-            DEFINE_MEMBER(__thiscall* GetClientEntity_t, IClientEntity*, int);
+            DEFINE_MEMBER(__thiscall * GetClientEntity_t, IClientEntity*, int);
             return CALL_MEMBER(GetClientEntity_t, this, 3, entnum);
+        }
+
+        IClientEntity* GetClientEntityFromHandle(CBaseHandle hEntity)
+        {
+            DEFINE_MEMBER(__thiscall * GetClientEntityFromHandle_t, IClientEntity*, CBaseHandle);
+            return CALL_MEMBER(GetClientEntityFromHandle_t, this, 4, hEntity);
+        }
+
+        IClientEntity* GetClientEntityFromHandle(unsigned long hEntity)
+        {
+            DEFINE_MEMBER(__thiscall * GetClientEntityFromHandle_t, IClientEntity*, unsigned long);
+            return CALL_MEMBER(GetClientEntityFromHandle_t, this, 4, hEntity);
         }
 
         int NumberOfEntities(bool bIncludeNonNetworkable = true)

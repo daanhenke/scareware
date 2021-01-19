@@ -22,9 +22,9 @@ namespace sw::iface
         IN_BULLRUSH = 1 << 22
     };
     
-    class CUserCmd
+    struct CUserCmd
     {
-    public:
+        void* vmt;
         int command_number;
         int tick_count;
         QAngle viewangles;
