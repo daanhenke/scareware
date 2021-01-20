@@ -21,7 +21,7 @@ namespace sw::iface
         bool IsAlive()
         {
             DEFINE_MEMBER_GETTER(__thiscall * IsAlive_t, bool);
-            return CALL_MEMBER_GETTER(IsAlive_t, this, 3);
+            return CALL_MEMBER_GETTER(IsAlive_t, this, 155);
         }
 
         ClientClass* GetClientClass()

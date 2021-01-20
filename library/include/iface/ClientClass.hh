@@ -14,6 +14,6 @@ namespace sw::iface
 		char* networkName;
 		RecvTable* recvTable;
 		ClientClass* next;
-		ClassId* classId;
+		ClassId classId;
 	};
 }

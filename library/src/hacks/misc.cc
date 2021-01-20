@@ -9,7 +9,7 @@ void sw::hacks::misc::Bunnyhop(iface::CUserCmd* cmd)
 
     if (!local_player) return;
     if (!local_player->IsAlive()) return;
-    if (!cmd->buttons & sw::iface::IN_JUMP) return;
+    if (!(cmd->buttons & sw::iface::IN_JUMP)) return;
     if (!(local_player->fFlags() & 1)) cmd->buttons &= ~sw::iface::IN_JUMP;
 }
 
@@ -55,14 +55,19 @@ void sw::hacks::misc::GlowPlayers()
 
         if (glowDef->IsUnused() || !entity) continue;
 
-        auto classId = *entity->GetClientClass()->classId;
-
-        iface::Vector color;
-        switch (classId)
+        auto classInstance = entity->GetClientClass();
+        if (classInstance == nullptr)
         {
-        default:
-            color = iface::Vector(0, 1.f, 0);
-        case iface::ClassId::CSPlayer:
+            continue;
+        }
+        auto classId = classInstance->classId;
+
+        iface::Vector color(0, 1.f, 0);
+
+        if (classId == iface::ClassId::CSPlayer)
+        {
+            if (entity == interfaces::GetLocalPlayer()) continue;
+
             if (entity->iTeamNum() == local_player->iTeamNum())
             {
                 color = iface::Vector(0, 0, 1.f);
@@ -71,7 +76,6 @@ void sw::hacks::misc::GlowPlayers()
             {
                 color = iface::Vector(1.f, 0, 0);
             }
-            break;
         }
 
         glowDef->m_bRenderWhenOccluded = true;
