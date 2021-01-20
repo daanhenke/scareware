@@ -19,12 +19,9 @@ void sw::hacks::skin::FrameStageNotify()
 
 	for (int index = 0; weapons[index] != 0xFFFFFFFF; index++)
 	{
-		interfaces::ICvar->ConsoleDPrintf("weapon handle: %x\n", weapons[index]);
-
 		auto weapon = interfaces::IClientEntityList->GetClientEntityFromHandle((unsigned long) weapons[index]);
 
 		if (!weapon) continue;
-		interfaces::ICvar->ConsoleDPrintf("weapon entity: %x\n", weapon);
 
 		auto& weaponId = weapon->iItemDefinitionIndex2();
 

@@ -15,6 +15,7 @@ target_sources(scareware
         src/netvars.cc
         src/hacks/skin.cc
         src/hacks/misc.cc
+        src/hacks/chams.cc
 )
 
 target_include_directories(scareware PUBLIC include)

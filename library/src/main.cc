@@ -4,11 +4,13 @@
 #include "hooks.hh"
 #include "logic.hh"
 #include "netvars.hh"
+#include "memory.hh"
 
 void Initialize()
 {
     sw::console::Create();
     sw::interfaces::FindInterfaces();
+    sw::memory::FindRandomPtrs();
     sw::netvars::manager = new sw::netvars::NetvarManager();
     sw::hooks::HookAll();
 }

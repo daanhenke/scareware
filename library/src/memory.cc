@@ -7,6 +7,8 @@
 
 std::map<std::string, DWORD> _mod_handle_map;
 
+uintptr_t sw::memory::CameraThinkPtr = 0;
+
 // Waits for a module to be loaded and returns a handle to it once it is
 DWORD sw::memory::WaitForModule(const char* module_name)
 {
@@ -104,4 +106,9 @@ DWORD sw::memory::FindPattern(const char* module_name, std::string pattern)
     }
 
     return 0;
+}
+
+void sw::memory::FindRandomPtrs()
+{
+    CameraThinkPtr = FindPattern("client", "\x85\xC0\x75\x30\x38\x86");
 }

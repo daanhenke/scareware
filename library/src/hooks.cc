@@ -5,10 +5,14 @@
 #include "util.hh"
 #include "hacks/skin.hh"
 #include "hacks/misc.hh"
+#include "hacks/chams.hh"
+#include "memory.hh"
 
 sw::vtable::VTableHook* sw::hooks::IBaseClientDLL = nullptr;
 sw::vtable::VTableHook* sw::hooks::IPanel = nullptr;
 sw::vtable::VTableHook* sw::hooks::ClientModeShared = nullptr;
+sw::vtable::VTableHook* sw::hooks::IVModelRender = nullptr;
+sw::vtable::VTableHook* sw::hooks::SvCheats = nullptr;
 
 sw::hooks::PaintTraverseFn oPaintTraverse;
 void __fastcall pt_hook(void* pPanels, int edx, unsigned int vguiPanel, bool forceRepaint, bool allowForce)
@@ -154,11 +158,24 @@ void __fastcall fsn_hook(void* _this, int edx, sw::iface::FrameStage stage)
     oFrameStageNotify(sw::interfaces::IBaseClientDLL, edx, stage);
 }
 
+sw::hooks::SvCheatsGetFn oSvCheatsGet;
+bool __fastcall svcheats_get_hook(void* _this)
+{
+    if (sw::memory::CameraThinkPtr == uintptr_t(_ReturnAddress()))
+    {
+        return true;
+    }
+    return oSvCheatsGet(_this);
+}
+
 void sw::hooks::HookAll()
 {
     IBaseClientDLL = new vtable::VTableHook((DWORD*) interfaces::IBaseClientDLL);
     IPanel = new vtable::VTableHook((DWORD*) interfaces::IPanel);
     ClientModeShared = new vtable::VTableHook((DWORD*) interfaces::ClientModeShared);
+    //console::WriteFormat("sv_cheats: %x\n", interfaces::ICvar->FindVar("sv_cheats"));
+    //MessageBoxA(nullptr, "Yeet", "Yeet", MB_OK);
+    //SvCheats = new vtable::VTableHook((DWORD*)interfaces::ICvar->FindVar("sv_cheats"));
 
     oPaintTraverse = (PaintTraverseFn) IPanel->HookMethod((DWORD) &pt_hook, 41);
     sw::interfaces::ICvar->ConsoleDPrintf("oPaintTraverse: %x\n", oPaintTraverse);
@@ -166,6 +183,8 @@ void sw::hooks::HookAll()
     oCreateMove = (CreateMoveFn) ClientModeShared->HookMethod((DWORD) &cm_hook, 24);
 
     oFrameStageNotify = (FrameStageNotifyFn)IBaseClientDLL->HookMethod((DWORD)&fsn_hook, 37);
+
+    //oSvCheatsGet = (SvCheatsGetFn) SvCheats->HookMethod((DWORD)&svcheats_get_hook, 13);
 }
 
 void sw::hooks::UnhookAll()
@@ -173,4 +192,5 @@ void sw::hooks::UnhookAll()
     IBaseClientDLL->RestoreOld();
     IPanel->RestoreOld();
     ClientModeShared->RestoreOld();
+    SvCheats->RestoreOld();
 }
