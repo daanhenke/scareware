@@ -2,6 +2,7 @@
 #include "interfaces.hh"
 #include <cstring>
 #include "console.hh"
+#include "memory.hh"
 
 void sw::hacks::misc::Bunnyhop(iface::CUserCmd* cmd)
 {
@@ -83,5 +84,72 @@ void sw::hacks::misc::GlowPlayers()
         glowDef->m_flGlowAlpha = 0.8f;
         glowDef->m_flBloomAmount = 1.f;
         glowDef->m_vGlowColor = color;
+    }
+}
+
+#include <vector>
+std::vector<std::string> m_mats;
+void sw::hacks::misc::DarkWorld()
+{
+    for (short handle = interfaces::IMaterialSystem->FirstMaterial(); handle != interfaces::IMaterialSystem->InvalidMaterial(); handle = interfaces::IMaterialSystem->NextMaterial(handle))
+    {
+        const auto material = interfaces::IMaterialSystem->GetMaterial(handle);
+
+        if (!material || ! material->IsPrecached()) continue;
+
+        const std::string_view textureGroup = material->GetTextureGroupName();
+        if (textureGroup.starts_with("World") || textureGroup.starts_with("StaticProp"))
+        {
+            material->ColorModulate(.1f, .1f, .1f);
+        }
+        else
+        {
+            if (! std::count(m_mats.begin(), m_mats.end(), textureGroup))
+            {
+                console::WriteColorFormat(FOREGROUND_RED, "New texture group: %s\n", textureGroup);
+                m_mats.emplace_back(textureGroup);
+            }
+        }
+    }
+}
+
+void sw::hacks::misc::Skybox(iface::FrameStage stage)
+{
+    if (stage != iface::FrameStage::RENDER_END && stage != iface::FrameStage::RENDER_START) return;
+
+    if (stage == iface::FrameStage::RENDER_START)
+    {
+        auto skybox = interfaces::ICvar->FindVar("sv_skyname");
+        if (!skybox) return;
+        skybox->SetValue("sky_csgo_night02");
+    }
+}
+
+void sw::hacks::misc::NoFlash()
+{
+    auto localPlayer = interfaces::GetLocalPlayer();
+
+    if (!localPlayer) return;
+
+    if (localPlayer->flFlashMaxAlpha() > 0.f) localPlayer->flFlashMaxAlpha() = 0.f;
+}
+
+void sw::hacks::misc::NoSmoke(iface::FrameStage stage)
+{
+    if (stage != iface::FrameStage::RENDER_END) return;
+
+    std::vector<const char*> m_smoke_materials = {
+    "particle/vistasmokev1/vistasmokev1_emods",
+    "particle/vistasmokev1/vistasmokev1_emods_impactdust",
+    "particle/vistasmokev1/vistasmokev1_fire",
+    "particle/vistasmokev1/vistasmokev1_smokegrenade"
+    };
+
+    for (auto entry : m_smoke_materials)
+    {
+        auto material = interfaces::IMaterialSystem->FindMaterial(entry);
+
+        if (!material) continue;
+        material->SetMaterialVarFlag(iface::MaterialVarFlag::WIREFRAME, true);
     }
 }

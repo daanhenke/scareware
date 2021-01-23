@@ -1,5 +1,6 @@
 #pragma once
 #include "iface/CUserCmd.hh"
+#include "iface/FrameStage.hh"
 
 namespace sw::hacks::misc
 {
@@ -7,4 +8,9 @@ namespace sw::hacks::misc
 	void ThirdPerson();
 
 	void GlowPlayers();
+	void DarkWorld();
+	void Skybox(iface::FrameStage stage);
+
+	void NoFlash();
+	void NoSmoke(iface::FrameStage stage);
 }

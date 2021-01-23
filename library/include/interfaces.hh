@@ -12,6 +12,9 @@
 #include "iface/IClientEntityList.hh"
 #include "iface/CInput.hh"
 #include "iface/CGlowObjectManager.hh"
+#include "iface/IMaterialSystem.hh"
+#include "iface/IMaterial.hh"
+#include "iface/ConVar.hh"
 
 namespace sw::interfaces
 {
@@ -28,6 +31,7 @@ namespace sw::interfaces
     extern iface::IClientEntity** LocalPlayer;
     extern iface::CInput* CInput;
     extern iface::CGlowObjectManager* CGlowObjectManager;
+    extern iface::IMaterialSystem* IMaterialSystem;
 
     iface::IClientEntity* GetLocalPlayer();
 }

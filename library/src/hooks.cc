@@ -152,7 +152,15 @@ void __fastcall fsn_hook(void* _this, int edx, sw::iface::FrameStage stage)
             sw::hacks::skin::FrameStageNotify();
             sw::hacks::misc::ThirdPerson();
             sw::hacks::misc::GlowPlayers();
+            sw::hacks::misc::NoFlash();
         }
+        else if (stage == sw::iface::FrameStage::RENDER_START)
+        {
+            sw::hacks::misc::DarkWorld();
+        }
+
+        sw::hacks::misc::Skybox(stage);
+        sw::hacks::misc::NoSmoke(stage);
     }
 
     oFrameStageNotify(sw::interfaces::IBaseClientDLL, edx, stage);
@@ -165,6 +173,7 @@ bool __fastcall svcheats_get_hook(void* _this)
     {
         return true;
     }
+
     return oSvCheatsGet(_this);
 }
 
@@ -173,18 +182,15 @@ void sw::hooks::HookAll()
     IBaseClientDLL = new vtable::VTableHook((DWORD*) interfaces::IBaseClientDLL);
     IPanel = new vtable::VTableHook((DWORD*) interfaces::IPanel);
     ClientModeShared = new vtable::VTableHook((DWORD*) interfaces::ClientModeShared);
-    //console::WriteFormat("sv_cheats: %x\n", interfaces::ICvar->FindVar("sv_cheats"));
-    //MessageBoxA(nullptr, "Yeet", "Yeet", MB_OK);
-    //SvCheats = new vtable::VTableHook((DWORD*)interfaces::ICvar->FindVar("sv_cheats"));
+    SvCheats = new vtable::VTableHook((DWORD*)interfaces::ICvar->FindVar("sv_cheats"));
 
     oPaintTraverse = (PaintTraverseFn) IPanel->HookMethod((DWORD) &pt_hook, 41);
-    sw::interfaces::ICvar->ConsoleDPrintf("oPaintTraverse: %x\n", oPaintTraverse);
 
     oCreateMove = (CreateMoveFn) ClientModeShared->HookMethod((DWORD) &cm_hook, 24);
 
     oFrameStageNotify = (FrameStageNotifyFn)IBaseClientDLL->HookMethod((DWORD)&fsn_hook, 37);
 
-    //oSvCheatsGet = (SvCheatsGetFn) SvCheats->HookMethod((DWORD)&svcheats_get_hook, 13);
+    oSvCheatsGet = (SvCheatsGetFn) SvCheats->HookMethod((DWORD)&svcheats_get_hook, 13);
 }
 
 void sw::hooks::UnhookAll()

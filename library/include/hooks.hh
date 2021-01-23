@@ -15,7 +15,7 @@ namespace sw::hooks
     typedef void(__thiscall* PaintTraverseFn)(void*, unsigned int, bool, bool);
     typedef bool(__thiscall* CreateMoveFn)(void*, float flInputSampleTime, iface::CUserCmd* cmd);
     typedef void(__fastcall* FrameStageNotifyFn)(void* _this, int edx, sw::iface::FrameStage stage);
-    typedef bool(__fastcall* SvCheatsGetFn)(void* _this);
+    typedef bool(__thiscall* SvCheatsGetFn)(void* _this);
 
     void HookAll();
     void UnhookAll();

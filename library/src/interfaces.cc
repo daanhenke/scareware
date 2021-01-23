@@ -15,6 +15,7 @@ sw::iface::IClientEntityList*   sw::interfaces::IClientEntityList = nullptr;
 sw::iface::IClientEntity**      sw::interfaces::LocalPlayer = nullptr;
 sw::iface::CInput*              sw::interfaces::CInput = nullptr;
 sw::iface::CGlowObjectManager*  sw::interfaces::CGlowObjectManager = nullptr;
+sw::iface::IMaterialSystem*     sw::interfaces::IMaterialSystem = nullptr;
 
 // Private map used for printing all the interface pointers
 std::map<std::string, uintptr_t> _iface_ptr_map;
@@ -77,6 +78,7 @@ bool sw::interfaces::FindInterfaces()
     IInputSystem = GetInterface<iface::IInputSystem>("InputSystemVersion", "inputsystem");
     IVEngineClient = GetInterface<iface::IVEngineClient>("VEngineClient", "engine");
     IClientEntityList = GetInterface<iface::IClientEntityList>("VClientEntityList", "client");
+    IMaterialSystem = GetInterface<iface::IMaterialSystem>("VMaterialSystem080", "materialsystem");
     
     // These interfaces don't have one, get them using magic instead
     ClientModeShared = **reinterpret_cast<iface::ClientModeShared ***>( ( *reinterpret_cast<uintptr_t **>( IBaseClientDLL ) )[ 10 ] + 0x5 );
