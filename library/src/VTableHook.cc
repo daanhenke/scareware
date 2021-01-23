@@ -7,15 +7,16 @@ sw::vtable::VTableHook::VTableHook(DWORD* instance)
     m_table_old = (DWORD*) *instance;
 
     // Allocate a new vtable
-    int table_size = MethodCount() * sizeof(DWORD);
-    console::WriteFormat("Found vtable with %d entries!\n", MethodCount());
-    m_table_new = (DWORD*) VirtualAlloc(nullptr, table_size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+    int method_count = MethodCount();
+    int table_size = (method_count + 1) * sizeof(DWORD);
+    console::WriteFormat("Found vtable with %d entries!\n", method_count);
+    m_table_new = new DWORD[method_count + 1];
 
     // Copy over the old vtable
-    CopyMemory(m_table_new, m_table_old, table_size);
+    CopyMemory(m_table_new, &m_table_old[-1], table_size);
 
     // Use the new vtable instead
-    *m_instance = (DWORD) m_table_new;
+    *m_instance = (DWORD) &m_table_new[1];
 }
 
 // Helper function to calculate the size of a vtable
@@ -34,7 +35,7 @@ int sw::vtable::VTableHook::MethodCount()
 // Overwrite a function pointer inside the vtable
 DWORD sw::vtable::VTableHook::HookMethod(DWORD new_address, int index)
 {
-    m_table_new[index] = new_address;
+    m_table_new[1 + index] = new_address;
     return m_table_old[index];
 }
 
