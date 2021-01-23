@@ -26,7 +26,7 @@ namespace sw::iface
 
         ClientClass* GetClientClass()
         {
-            DEFINE_MEMBER_GETTER(__thiscall * IsAlive_t, ClientClass*);
+            DEFINE_MEMBER_GETTER(__thiscall* IsAlive_t, ClientClass*);
             return CALL_MEMBER_GETTER(IsAlive_t, this + sizeof(uintptr_t) * 2, 2);
         }
 
@@ -34,6 +34,8 @@ namespace sw::iface
         NETVAR(fFlags, "CBasePlayer", "m_fFlags", int);
         NETVAR(hMyWeapons, "CBaseCombatCharacter", "m_hMyWeapons", int[64]);
         NETVAR(iTeamNum, "CBaseEntity", "m_iTeamNum", int);
+
+        NETVAR(flFlashMaxAlpha, "CCSPlayer", "m_flFlashMaxAlpha", float);
 
         NETVAR(iItemDefinitionIndex, "CBaseAttributableItem", "m_iItemDefinitionIndex", short);
         NETVAR(iItemDefinitionIndex2, "CBaseAttributableItem", "m_iItemDefinitionIndex", WeaponId);

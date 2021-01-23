@@ -18,7 +18,7 @@ namespace sw::iface
 
         ConVar* FindVar(const char* var_name)
         {
-            DEFINE_MEMBER(*FindVar_t, ConVar*, const char*);
+            DEFINE_MEMBER(__thiscall* FindVar_t, ConVar*, const char*);
             return CALL_MEMBER(FindVar_t, this, 15, var_name);
         }
     };
