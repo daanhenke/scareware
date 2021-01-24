@@ -13,6 +13,10 @@
 DWORD WINAPI HackyUnload(LPVOID lpParam)
 {
     __asm {
+        // Call sleep so we don't unload our cheat while a hook is still running
+        push 1000
+        call Sleep
+
         // Put the argument for ExitThread on the stack (status code, so we'll keep it at 0)
         push 0
 
@@ -37,7 +41,6 @@ void sw::logic::UnloadSelf()
     console::WriteFormat("Goodbye!\n");
     //events::UndoListeners();
     hooks::UnhookAll();
-    interfaces::IMaterialSystem->UncacheAllMaterials();
     console::Destroy();
 
     CreateThread(nullptr, 0, HackyUnload, nullptr, 0, nullptr);
