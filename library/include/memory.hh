@@ -2,13 +2,19 @@
 
 #include <Windows.h>
 #include <string>
+#include "iface/IViewRenderBeams.hh"
+
+namespace sw::iface
+{
+    class KeyValues;
+}
 
 namespace sw::memory
 {
     template<typename T>
     constexpr T ToAbsolute(uintptr_t address)
     {
-        return reinterpret_cast<T>(address + 4 + *reinterpret_cast<std::int32_t*>(address));
+        return (T)(address + 4 + *reinterpret_cast<std::int32_t*>(address));
     }
 
     DWORD WaitForModule(const char* module_name);
@@ -18,4 +24,10 @@ namespace sw::memory
     void FindRandomPtrs();
     extern uintptr_t CameraThinkPtr;
     extern std::add_pointer_t<void __fastcall(const char*)> LoadSky;
+
+    extern uintptr_t KeyValuesFromString;
+    extern iface::KeyValues* (__thiscall* KeyValuesFindKey)(iface::KeyValues* keyValues, const char* keyName, bool create);
+    extern void (__thiscall* KeyValuesSetString)(iface::KeyValues* keyValues, const char* value);
+
+    extern iface::IViewRenderBeams* IViewRenderBeams;
 }

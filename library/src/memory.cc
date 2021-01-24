@@ -9,6 +9,10 @@ std::map<std::string, DWORD> _mod_handle_map;
 
 uintptr_t sw::memory::CameraThinkPtr = 0;
 std::add_pointer_t<void __fastcall(const char*)> sw::memory::LoadSky = nullptr;
+uintptr_t sw::memory::KeyValuesFromString;
+sw::iface::KeyValues* (__thiscall* sw::memory::KeyValuesFindKey)(sw::iface::KeyValues* keyValues, const char* keyName, bool create);
+void(__thiscall* sw::memory::KeyValuesSetString)(sw::iface::KeyValues* keyValues, const char* value);
+sw::iface::IViewRenderBeams* sw::memory::IViewRenderBeams = nullptr;
 
 // Waits for a module to be loaded and returns a handle to it once it is
 DWORD sw::memory::WaitForModule(const char* module_name)
@@ -113,4 +117,10 @@ void sw::memory::FindRandomPtrs()
 {
     CameraThinkPtr = FindPattern("client", "\x85\xC0\x75\x30\x38\x86");
     LoadSky = ToAbsolute<decltype(LoadSky)>(FindPattern("engine", "\xE8????\x84\xC0\x74\x2D\xA1") + 1);
+
+    KeyValuesFromString = ToAbsolute<decltype(KeyValuesFromString)>(FindPattern("client", "\xE8????\x83\xC4\x04\x89\x45\xD8") + 1);
+    KeyValuesFindKey = ToAbsolute<decltype(KeyValuesFindKey)>(FindPattern("client", "\xE8????\xF7\x45") + 1);
+    KeyValuesSetString = ToAbsolute<decltype(KeyValuesSetString)>(FindPattern("client", "\xE8????\x89\x77\x38") + 1);
+
+    IViewRenderBeams = *reinterpret_cast<iface::IViewRenderBeams**>(FindPattern("client", "\xB9????\x0F\x11\x44\x24?\xC7\x44\x24?????\xF3\x0F\x10\x84\x24") + 1);
 }

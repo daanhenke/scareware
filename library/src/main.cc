@@ -5,6 +5,7 @@
 #include "logic.hh"
 #include "netvars.hh"
 #include "memory.hh"
+#include "events.hh"
 
 void Initialize()
 {
@@ -13,6 +14,7 @@ void Initialize()
     sw::memory::FindRandomPtrs();
     sw::netvars::manager = new sw::netvars::NetvarManager();
     sw::hooks::HookAll();
+    //sw::events::AddListeners();
 }
 
 BOOL WINAPI DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpBaseAddress)

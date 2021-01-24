@@ -16,6 +16,8 @@ sw::iface::IClientEntity**      sw::interfaces::LocalPlayer = nullptr;
 sw::iface::CInput*              sw::interfaces::CInput = nullptr;
 sw::iface::CGlowObjectManager*  sw::interfaces::CGlowObjectManager = nullptr;
 sw::iface::IMaterialSystem*     sw::interfaces::IMaterialSystem = nullptr;
+sw::iface::IGameEventManager2*  sw::interfaces::IGameEventManager2 = nullptr;
+sw::iface::CGlobalVars*         sw::interfaces::CGlobalVars = nullptr;
 
 // Private map used for printing all the interface pointers
 std::map<std::string, uintptr_t> _iface_ptr_map;
@@ -79,6 +81,7 @@ bool sw::interfaces::FindInterfaces()
     IVEngineClient = GetInterface<iface::IVEngineClient>("VEngineClient", "engine");
     IClientEntityList = GetInterface<iface::IClientEntityList>("VClientEntityList", "client");
     IMaterialSystem = GetInterface<iface::IMaterialSystem>("VMaterialSystem080", "materialsystem");
+    IGameEventManager2 = GetInterface<iface::IGameEventManager2>("GAMEEVENTSMANAGER002", "engine");
     
     // These interfaces don't have one, get them using magic instead
     ClientModeShared = **reinterpret_cast<iface::ClientModeShared ***>( ( *reinterpret_cast<uintptr_t **>( IBaseClientDLL ) )[ 10 ] + 0x5 );
@@ -92,6 +95,9 @@ bool sw::interfaces::FindInterfaces()
 
     CGlowObjectManager = *reinterpret_cast<iface::CGlowObjectManager**>(memory::FindPattern("client", "\x0F\x11\x05????\x83\xC8\x01") + 3);
     _iface_ptr_map["CGlowObjectManager"] = (uintptr_t)CGlowObjectManager;
+
+    CGlobalVars = **reinterpret_cast<iface::CGlobalVars***>((*reinterpret_cast<uintptr_t**>(IBaseClientDLL))[11] + 10);
+    _iface_ptr_map["CGlobalVars"] = (uintptr_t)CGlobalVars;
     
     PrintInterfaces();
 

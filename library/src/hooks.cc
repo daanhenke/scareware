@@ -13,6 +13,7 @@ sw::vtable::VTableHook* sw::hooks::IPanel = nullptr;
 sw::vtable::VTableHook* sw::hooks::ClientModeShared = nullptr;
 sw::vtable::VTableHook* sw::hooks::IVModelRender = nullptr;
 sw::vtable::VTableHook* sw::hooks::SvCheats = nullptr;
+sw::vtable::VTableHook* sw::hooks::IGameEventManager2 = nullptr;
 
 sw::hooks::PaintTraverseFn oPaintTraverse;
 void __fastcall pt_hook(void* pPanels, int edx, unsigned int vguiPanel, bool forceRepaint, bool allowForce)
@@ -153,6 +154,8 @@ void __fastcall fsn_hook(void* _this, int edx, sw::iface::FrameStage stage)
             sw::hacks::misc::ThirdPerson();
             sw::hacks::misc::GlowPlayers();
             sw::hacks::misc::NoFlash();
+            sw::hacks::misc::MemeRagdolls();
+            sw::hacks::misc::Remove3dSky();
         }
         else if (stage == sw::iface::FrameStage::RENDER_START)
         {
@@ -161,6 +164,7 @@ void __fastcall fsn_hook(void* _this, int edx, sw::iface::FrameStage stage)
 
         sw::hacks::misc::Skybox(stage);
         sw::hacks::misc::NoSmoke(stage);
+        sw::hacks::misc::RemoveRecoil(stage);
     }
 
     oFrameStageNotify(sw::interfaces::IBaseClientDLL, edx, stage);
@@ -177,12 +181,37 @@ bool __fastcall svcheats_get_hook(void* _this)
     return oSvCheatsGet(_this);
 }
 
+sw::hooks::FireEventsClientSideFn oFireEventsClientSide;
+
+bool __fastcall fecs_hook(void* _this, int edx, sw::iface::IGameEvent* event)
+{
+    auto eventName = event->GetName();
+
+    if (! std::strcmp(eventName, "bullet_impact"))
+    {
+        sw::console::WriteFormat("Bullet impact!\n");
+        sw::hacks::misc::BulletTracers(event);
+    }
+
+    return oFireEventsClientSide(_this, edx, event);
+}
+
+class test : public sw::iface::IGameEventListener2
+{
+    ~test() {}
+    void FireGameEvent(sw::iface::IGameEvent* event)
+    {
+    }
+};
+
+test* m_test = nullptr;
 void sw::hooks::HookAll()
 {
     IBaseClientDLL = new vtable::VTableHook((DWORD*) interfaces::IBaseClientDLL);
     IPanel = new vtable::VTableHook((DWORD*) interfaces::IPanel);
     ClientModeShared = new vtable::VTableHook((DWORD*) interfaces::ClientModeShared);
     SvCheats = new vtable::VTableHook((DWORD*)interfaces::ICvar->FindVar("sv_cheats"));
+    IGameEventManager2 = new vtable::VTableHook((DWORD*) interfaces::IGameEventManager2);
 
     oPaintTraverse = (PaintTraverseFn) IPanel->HookMethod((DWORD) &pt_hook, 41);
 
@@ -191,6 +220,11 @@ void sw::hooks::HookAll()
     oFrameStageNotify = (FrameStageNotifyFn)IBaseClientDLL->HookMethod((DWORD)&fsn_hook, 37);
 
     oSvCheatsGet = (SvCheatsGetFn) SvCheats->HookMethod((DWORD)&svcheats_get_hook, 13);
+
+    oFireEventsClientSide = (FireEventsClientSideFn)IGameEventManager2->HookMethod((DWORD)&fecs_hook, 9);
+
+    m_test = new test();
+    interfaces::IGameEventManager2->AddListener(m_test, "bullet_impact", false);
 }
 
 void sw::hooks::UnhookAll()
@@ -199,4 +233,5 @@ void sw::hooks::UnhookAll()
     IPanel->RestoreOld();
     ClientModeShared->RestoreOld();
     SvCheats->RestoreOld();
+    IGameEventManager2->RestoreOld();
 }

@@ -2,6 +2,7 @@
 
 #include "iface/common.hh"
 #include "iface/VMatrix.hh"
+#include "iface/PlayerInfo.hh"
 
 namespace sw::iface
 {
@@ -13,6 +14,8 @@ namespace sw::iface
             DEFINE_MEMBER(__thiscall* GetScreenSize_t, void, int&, int&);
             CALL_MEMBER(GetScreenSize_t, this, 5, width, height);
         }
+
+        LAZY_MEMBER(GetPlayerInfo, bool, (int entityIndex, PlayerInfo& info), 8, (this, entityIndex, std::ref(info)));
 
         int GetLocalPlayer()
         {

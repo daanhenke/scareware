@@ -153,3 +153,117 @@ void sw::hacks::misc::NoSmoke(iface::FrameStage stage)
         material->SetMaterialVarFlag(iface::MaterialVarFlag::WIREFRAME, true);
     }
 }
+
+void sw::hacks::misc::RemoveRecoil(iface::FrameStage stage)
+{
+    static iface::Vector aimPunch;
+    static iface::Vector viewPunch;
+
+    auto localPlayer = interfaces::GetLocalPlayer();
+
+    if (stage == iface::FrameStage::RENDER_START)
+    {
+        aimPunch = localPlayer->aimPunchAngle();
+        viewPunch = localPlayer->viewPunchAngle();
+
+        localPlayer->aimPunchAngle() = iface::Vector{};
+        localPlayer->viewPunchAngle() = iface::Vector{};
+    }
+    else if (stage == iface::FrameStage::RENDER_END)
+    {
+        localPlayer->aimPunchAngle() = aimPunch;
+        localPlayer->viewPunchAngle() = viewPunch;
+    }
+}
+
+void sw::hacks::misc::MemeRagdolls()
+{
+    auto clRagdollGravity = interfaces::ICvar->FindVar("cl_ragdoll_gravity");
+    if (!clRagdollGravity) return;
+    clRagdollGravity->SetValue(-600);
+}
+
+void sw::hacks::misc::Remove3dSky()
+{
+    auto r3dSky = interfaces::ICvar->FindVar("r_3dsky");
+    if (!r3dSky) return;
+    r3dSky->SetValue(false);
+}
+
+int GetUserId(sw::iface::IClientEntity* entity)
+{
+    sw::iface::PlayerInfo info;
+    sw::interfaces::IVEngineClient->GetPlayerInfo(entity->Index(), info);
+    return info.userId;
+}
+
+#include "memory.hh"
+void sw::hacks::misc::BulletTracers(iface::IGameEvent* event)
+{
+    auto localPlayer = interfaces::GetLocalPlayer();
+    if (!localPlayer) return;
+
+    console::WriteFormat("got player: %x %x\n", GetUserId(localPlayer), event->GetInt("userid"));
+
+    if (event->GetInt("userid") != GetUserId(localPlayer)) return;
+
+    console::WriteFormat("local shot\n");
+
+    auto activeWeapon = localPlayer->GetActiveWeapon();
+    if (!activeWeapon) return;
+
+    console::WriteFormat("got weapon\n");
+
+    iface::BeamInfo_t beamInfo;
+    if (!localPlayer->ShouldDraw())
+    {
+        auto viewModel = interfaces::IClientEntityList->GetClientEntityFromHandle(localPlayer->hViewModel());
+        if (!viewModel) return;
+
+        if (!viewModel->GetAttachment(activeWeapon->GetMuzzleAttachment1stPerson(viewModel), beamInfo.m_vecStart)) return;
+    }
+    else
+    {
+        auto worldModel = interfaces::IClientEntityList->GetClientEntityFromHandle(activeWeapon->hWeaponWorldModel());
+        if (!worldModel) return;
+
+        if (!worldModel->GetAttachment(activeWeapon->GetMuzzleAttachment3rdPerson(), beamInfo.m_vecStart)) return;
+    }
+
+    console::WriteFormat("setting up beam\n");
+
+    beamInfo.m_nType = 0;
+    beamInfo.m_flLife = 0.f;
+    beamInfo.m_flAmplitude = 0.f;
+    beamInfo.m_nSegments = -1;
+    beamInfo.m_bRenderable = true;
+    beamInfo.m_flSpeed = .2f;
+    beamInfo.m_flWidth = beamInfo.m_flEndWidth = 2.f;
+    beamInfo.m_nFlags = 0x40;
+    beamInfo.m_flFadeLength = 20.f;
+    beamInfo.m_nStartFrame = 0;
+    beamInfo.m_flFrameRate = .0f;
+
+    beamInfo.m_nHaloIndex = -1;
+    beamInfo.m_pszHaloName = nullptr;
+
+    beamInfo.m_nModelIndex = -1;
+    beamInfo.m_pszModelName = "sprites/physbeam.vmt";
+
+    beamInfo.m_flRed = 255.f;
+    beamInfo.m_flGreen = 0.f;
+    beamInfo.m_flBlue = 255.f;
+    beamInfo.m_flBrightness = 255.f;
+
+    beamInfo.m_vecEnd.x = event->GetFloat("x");
+    beamInfo.m_vecEnd.y = event->GetFloat("y");
+    beamInfo.m_vecEnd.z = event->GetFloat("z");
+
+    auto beam = sw::memory::IViewRenderBeams->CreateBeamPoints(beamInfo);
+    if (beam)
+    {
+        console::WriteFormat("made beam\n");
+        beam->m_nFlags &= ~0x4000;
+        beam->m_flDie = interfaces::CGlobalVars->currenttime + 2.f;
+    }
+}

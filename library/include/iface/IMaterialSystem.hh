@@ -5,10 +5,13 @@
 namespace sw::iface
 {
 	class IMaterial;
+	class KeyValues;
+	class IMatRenderContext;
 
 	class IMaterialSystem
 	{
 	public:
+		LAZY_MEMBER(CreateMaterial, IMaterial*, (const char* materialName, KeyValues* keyValues), 83, (this, materialName, keyValues));
 		LAZY_MEMBER(FindMaterial, IMaterial*, (const char* materialName, const char* textureGroupName = nullptr, bool complain = true, const char* complainPrefix = nullptr), 84, (this, materialName, textureGroupName, complain, complainPrefix));
 		LAZY_MEMBER(FirstMaterial, short, (), 86, (this));
 		LAZY_MEMBER(NextMaterial, short, (short handle), 87, (this, handle));

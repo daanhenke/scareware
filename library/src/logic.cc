@@ -2,6 +2,7 @@
 #include "logic.hh"
 #include "hooks.hh"
 #include "console.hh"
+#include "events.hh"
 
 /*
     Unloads our code, since it isn't a real module anyway all we need to do is free the memory we use
@@ -33,6 +34,7 @@ DWORD WINAPI HackyUnload(LPVOID lpParam)
 void sw::logic::UnloadSelf()
 {
     console::WriteFormat("Goodbye!\n");
+    //events::UndoListeners();
     hooks::UnhookAll();
     console::Destroy();
 
