@@ -3,6 +3,7 @@
 #include "hooks.hh"
 #include "console.hh"
 #include "events.hh"
+#include "interfaces.hh"
 
 /*
     Unloads our code, since it isn't a real module anyway all we need to do is free the memory we use
@@ -36,6 +37,7 @@ void sw::logic::UnloadSelf()
     console::WriteFormat("Goodbye!\n");
     //events::UndoListeners();
     hooks::UnhookAll();
+    interfaces::IMaterialSystem->UncacheAllMaterials();
     console::Destroy();
 
     CreateThread(nullptr, 0, HackyUnload, nullptr, 0, nullptr);

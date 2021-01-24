@@ -15,6 +15,7 @@ namespace sw::iface
 	{
 	public:
 		LAZY_MEMBER(GetTextureGroupName, const char*, (), 1, (this));
+		LAZY_MEMBER(AlphaModulate, void, (float val), 27, (this, val));
 		LAZY_MEMBER(ColorModulate, void, (float r, float g, float b), 28, (this, r, g, b));
 		LAZY_MEMBER(IsPrecached, bool, (), 70, (this));
 		LAZY_MEMBER(SetMaterialVarFlag, void, (MaterialVarFlag flag, bool enabled), 29, (this, flag, enabled));

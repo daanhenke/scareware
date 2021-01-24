@@ -123,4 +123,6 @@ void sw::memory::FindRandomPtrs()
     KeyValuesSetString = ToAbsolute<decltype(KeyValuesSetString)>(FindPattern("client", "\xE8????\x89\x77\x38") + 1);
 
     IViewRenderBeams = *reinterpret_cast<iface::IViewRenderBeams**>(FindPattern("client", "\xB9????\x0F\x11\x44\x24?\xC7\x44\x24?????\xF3\x0F\x10\x84\x24") + 1);
+
+    console::WriteFormat("kv ptrs: %x, %x, %x\n", KeyValuesFromString, KeyValuesFindKey, KeyValuesSetString);
 }

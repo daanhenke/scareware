@@ -17,6 +17,8 @@
 #include "iface/ConVar.hh"
 #include "iface/IGameEventManager2.hh"
 #include "iface/CGlobalVars.hh"
+#include "iface/IVModelRender.hh"
+#include "iface/IStudioRender .hh"
 
 namespace sw::interfaces
 {
@@ -36,6 +38,8 @@ namespace sw::interfaces
     extern iface::IMaterialSystem* IMaterialSystem;
     extern iface::IGameEventManager2* IGameEventManager2;
     extern iface::CGlobalVars* CGlobalVars;
+    extern iface::IVModelRender* IVModelRender;
+    extern iface::IStudioRender* IStudioRender;
 
     iface::IClientEntity* GetLocalPlayer();
 }

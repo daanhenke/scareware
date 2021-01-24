@@ -25,6 +25,7 @@ namespace sw::iface
 		void* renderable;
 		const Model* model;
 		const matrix3x4* modelToWorld;
+		const matrix3x4* lightingOffset;
 		const Vector* lightingOrigin;
 		int flags;
 		int entityIndex;

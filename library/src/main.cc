@@ -6,6 +6,7 @@
 #include "netvars.hh"
 #include "memory.hh"
 #include "events.hh"
+#include "hacks/chams.hh"
 
 void Initialize()
 {
@@ -14,7 +15,7 @@ void Initialize()
     sw::memory::FindRandomPtrs();
     sw::netvars::manager = new sw::netvars::NetvarManager();
     sw::hooks::HookAll();
-    //sw::events::AddListeners();
+    sw::hacks::chams::Initialize();
 }
 
 BOOL WINAPI DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpBaseAddress)

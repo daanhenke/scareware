@@ -33,9 +33,13 @@ namespace sw::iface
         }
 
         LAZY_MEMBER(ShouldDraw, bool, (), 3, (this + sizeof(uintptr_t)));
+        LAZY_MEMBER(IsDormant, bool, (), 9, (this + sizeof(uintptr_t) * 2));
         LAZY_MEMBER(Index, int, (), 10, (this + sizeof(uintptr_t) * 2));
 
         LAZY_MEMBER(GetAttachment, bool, (int index, Vector& origin), 83, (this, index, std::ref(origin)));
+
+        LAZY_MEMBER(IsPlayer, bool, (), 157, (this));
+
         LAZY_MEMBER(GetActiveWeapon, IClientEntity*, (), 267, (this));
         LAZY_MEMBER(GetMuzzleAttachment1stPerson, int, (IClientEntity* viewModel), 467, (this, viewModel));
         LAZY_MEMBER(GetMuzzleAttachment3rdPerson, int, (), 468, (this));
