@@ -307,10 +307,9 @@ void sw::hacks::misc::RecoilControl(iface::CUserCmd* cmd)
     if (cmd->buttons & iface::IN_ATTACK)
     {
         iface::Vector newAngle = localPlayer->aimPunchAngle();
-        const float angleFix = 2.5;
-        cmd->viewangles.x += (oldAngle.x - (newAngle.x * angleFix));
-        cmd->viewangles.y += (oldAngle.y - (newAngle.y * angleFix));
-        cmd->viewangles.z = 0;
+        const float angleFix = 2;
+        cmd->viewangles.x -= (newAngle.x * angleFix);
+        cmd->viewangles.y -= (newAngle.y * angleFix);
 
         oldAngle = ClampAngle(newAngle);
     }
