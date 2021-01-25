@@ -262,8 +262,26 @@ void sw::hacks::misc::BulletTracers(iface::IGameEvent* event)
     auto beam = sw::memory::IViewRenderBeams->CreateBeamPoints(beamInfo);
     if (beam)
     {
-        console::WriteFormat("made beam\n");
         beam->m_nFlags &= ~0x4000;
         beam->m_flDie = interfaces::CGlobalVars->currenttime + 2.f;
     }
+}
+
+void sw::hacks::misc::NoscopeCrosshair()
+{
+    auto localPlayer = interfaces::GetLocalPlayer();
+    if (!localPlayer) return;
+    if (localPlayer->bIsScoped()) return;
+    auto weapon = localPlayer->GetActiveWeapon();
+    if (!weapon) return;
+    if (weapon->GetWeaponType() != iface::WeaponType::SniperRifle) return;
+
+    int screen_width, screen_height;
+    int crosshair_length = 16;
+    int crosshair_width = 3;
+    interfaces::IVEngineClient->GetScreenSize(screen_width, screen_height);
+
+    interfaces::ISurface->DrawSetColor(255, 0, 0, 255);
+    interfaces::ISurface->DrawFilledRect(screen_width / 2 - crosshair_length / 2, screen_height / 2 - crosshair_width / 2, screen_width / 2 + crosshair_length / 2, screen_height / 2 + crosshair_width / 2);
+    interfaces::ISurface->DrawFilledRect(screen_width / 2 - crosshair_width / 2, screen_height / 2 - crosshair_length / 2, screen_width / 2 + crosshair_width / 2, screen_height / 2 + crosshair_length / 2);
 }

@@ -2,9 +2,11 @@
 #include "logic.hh"
 #include "hooks.hh"
 #include "console.hh"
-#include "events.hh"
 #include "interfaces.hh"
-
+#include "netvars.hh"
+#include "memory.hh"
+#include "config.hh"
+#include "hacks/chams.hh"
 /*
     Unloads our code, since it isn't a real module anyway all we need to do is free the memory we use
     This is quite tricky since freeing it will mean the return instruction of VirtualFree will crash our game because the function it came from doesn't exist anymore
@@ -14,7 +16,7 @@ DWORD WINAPI HackyUnload(LPVOID lpParam)
 {
     __asm {
         // Call sleep so we don't unload our cheat while a hook is still running
-        push 1000
+        push 2000
         call Sleep
 
         // Put the argument for ExitThread on the stack (status code, so we'll keep it at 0)
@@ -39,11 +41,23 @@ DWORD WINAPI HackyUnload(LPVOID lpParam)
 void sw::logic::UnloadSelf()
 {
     console::WriteFormat("Goodbye!\n");
-    //events::UndoListeners();
+    auto crosshair = interfaces::ICvar->FindVar("crosshair");
+    if (crosshair) crosshair->SetValue(1);
     hooks::UnhookAll();
     console::Destroy();
 
     CreateThread(nullptr, 0, HackyUnload, nullptr, 0, nullptr);
+}
+
+void sw::logic::Initialize()
+{
+    console::Create();
+    config::UseConfig("~/vaporware.yml");
+    interfaces::FindInterfaces();
+    memory::FindRandomPtrs();
+    netvars::manager = new sw::netvars::NetvarManager();
+    hooks::HookAll();
+    hacks::chams::Initialize();
 }
 
 uintptr_t sw::logic::ModuleBase;

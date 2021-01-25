@@ -10,7 +10,6 @@ void sw::hacks::chams::Initialize()
 {
 	m_cham_material = interfaces::IMaterialSystem->CreateMaterial("normal", iface::KeyValues::FromString("VertexLitGeneric", nullptr));
 	m_cham_hidden_material = interfaces::IMaterialSystem->CreateMaterial("normal2", iface::KeyValues::FromString("VertexLitGeneric", nullptr));
-	console::WriteFormat("cham mats: %x, %x\n", m_cham_material, m_cham_hidden_material);
 }
 
 bool sw::hacks::chams::Render(void* ctx, void* state, iface::ModelRenderInfo& info, iface::matrix3x4* customBoneToWorld)

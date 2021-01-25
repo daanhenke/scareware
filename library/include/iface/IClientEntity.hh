@@ -16,6 +16,26 @@ namespace sw::iface
         LADDER = 9
     };
 
+    enum class WeaponType {
+        Knife = 0,
+        Pistol,
+        SubMachinegun,
+        Rifle,
+        Shotgun,
+        SniperRifle,
+        Machinegun,
+        C4,
+        Placeholder,
+        Grenade,
+        Unknown,
+        StackableItem,
+        Fists,
+        BreachCharge,
+        BumpMine,
+        Tablet,
+        Melee
+    };
+
     class IClientEntity
     {
     public:
@@ -41,6 +61,7 @@ namespace sw::iface
         LAZY_MEMBER(IsPlayer, bool, (), 157, (this));
 
         LAZY_MEMBER(GetActiveWeapon, IClientEntity*, (), 267, (this));
+        LAZY_MEMBER(GetWeaponType, WeaponType, (), 454, (this));
         LAZY_MEMBER(GetMuzzleAttachment1stPerson, int, (IClientEntity* viewModel), 467, (this, viewModel));
         LAZY_MEMBER(GetMuzzleAttachment3rdPerson, int, (), 468, (this));
 
@@ -53,6 +74,7 @@ namespace sw::iface
         NETVAR(hViewModel, "CBasePlayer", "m_hViewModel[0]", int);
 
         NETVAR(flFlashMaxAlpha, "CCSPlayer", "m_flFlashMaxAlpha", float);
+        NETVAR(bIsScoped, "CCSPlayer", "m_bIsScoped", bool);
 
         NETVAR(iItemDefinitionIndex, "CBaseAttributableItem", "m_iItemDefinitionIndex", short);
         NETVAR(iItemDefinitionIndex2, "CBaseAttributableItem", "m_iItemDefinitionIndex", WeaponId);
@@ -63,6 +85,7 @@ namespace sw::iface
         NETVAR(nFallbackSeed, "CBaseAttributableItem", "m_nFallbackSeed", unsigned);
         NETVAR(flFallbackWear, "CBaseAttributableItem", "m_flFallbackWear", float);
         NETVAR(nFallbackStatTrak, "CBaseAttributableItem", "m_nFallbackStatTrak", unsigned);
+        NETVAR(iAccountID, "CBaseAttributableItem", "m_iAccountID", int);
 
         NETVAR(hWeaponWorldModel, "CBaseCombatWeapon", "m_hWeaponWorldModel", int);
     };

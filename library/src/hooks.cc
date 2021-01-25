@@ -82,55 +82,60 @@ void __fastcall pt_hook(void* pPanels, int edx, unsigned int vguiPanel, bool for
     sw::interfaces::ISurface->SurfaceGetCursorPos(x, y);
     //sw::interfaces::ICvar->ConsoleDPrintf("X %d, Y: %d\n", x, y);
 
-    // Draw some random shit
-    if (uiPanelId != 0 && vguiPanel == uiPanelId && shouldDrawUi)
+    if (uiPanelId != 0 && vguiPanel == uiPanelId)
     {
-        const wchar_t* str = L"Ewa Gibba";
-        sw::interfaces::ISurface->DrawSetTextFont(font);
-        sw::interfaces::ISurface->DrawSetTextColor(0, 0, 0, 100);
-        sw::interfaces::ISurface->DrawSetTextPos(x + 1, y + 1);
-        sw::interfaces::ISurface->DrawPrintText(str, wcslen(str));
-        sw::interfaces::ISurface->DrawSetTextColor(255, 0, 255, 255);
-        sw::interfaces::ISurface->DrawSetTextPos(x, y);
-        sw::interfaces::ISurface->DrawPrintText(str, wcslen(str));
-
-        sw::interfaces::ISurface->DrawSetTextFont(0xa1);
-        sw::interfaces::ISurface->DrawSetTextPos(x + 50, y);
-        const wchar_t* meme = L"\x52";
-        sw::interfaces::ISurface->DrawPrintText(meme, wcslen(meme));
-
-        // Draw all entities
-        int maxIndex = sw::interfaces::IClientEntityList->GetHighestEntityIndex();
-        for (int entIndex = 0; entIndex < maxIndex; entIndex++)
-        {
-            sw::iface::IClientEntity* entity = sw::interfaces::IClientEntityList->GetClientEntity(entIndex);
-
-            if (entity == nullptr) continue;
-            //sw::iface::IClientNetworkable* networkable = entity->GetClientNetworkable();
-            //if (networkable == nullptr) continue;
-
-            //sw::interfaces::ICvar->ConsoleDPrintf("Entity '%x' dormant: %s\n", entIndex, networkable->IsDormant() ? "ye" : "na");
-
-            //sw::iface::C_BaseEntity* base = entity->GetBaseEntity();
-            //if (base == nullptr) continue;
-
-            sw::iface::Vector pos3d; //= entity->GetEyePosition();
-            pos3d.x = 0;
-            pos3d.y = 0;
-            pos3d.z = 0;
-            sw::iface::Vector2D pos2d = sw::util::WorldToScreen(pos3d);
-
-            sw::interfaces::ISurface->DrawSetColor(0, 0, 255, 255);
-            sw::interfaces::ISurface->DrawFilledRect(pos2d.x - 2, pos2d.y - 2, pos2d.x + 2, pos2d.y + 2);
-        } 
-
-        // for (wchar_t i = 0; i < 10; i++)
-        // {
-        //     wchar_t val = i + fontoff;
-        //     sw::interfaces::ISurface->DrawSetTextPos(50 * i, y + 50);
-        //     sw::interfaces::ISurface->DrawPrintText(&val, wcslen(&val));
-        // }
+        sw::hacks::misc::NoscopeCrosshair();
     }
+
+    // Draw some random shit
+    //if (uiPanelId != 0 && vguiPanel == uiPanelId && shouldDrawUi)
+    //{
+    //    const wchar_t* str = L"Ewa Gibba";
+    //    sw::interfaces::ISurface->DrawSetTextFont(font);
+    //    sw::interfaces::ISurface->DrawSetTextColor(0, 0, 0, 100);
+    //    sw::interfaces::ISurface->DrawSetTextPos(x + 1, y + 1);
+    //    sw::interfaces::ISurface->DrawPrintText(str, wcslen(str));
+    //    sw::interfaces::ISurface->DrawSetTextColor(255, 0, 255, 255);
+    //    sw::interfaces::ISurface->DrawSetTextPos(x, y);
+    //    sw::interfaces::ISurface->DrawPrintText(str, wcslen(str));
+
+    //    sw::interfaces::ISurface->DrawSetTextFont(0xa1);
+    //    sw::interfaces::ISurface->DrawSetTextPos(x + 50, y);
+    //    const wchar_t* meme = L"\x52";
+    //    sw::interfaces::ISurface->DrawPrintText(meme, wcslen(meme));
+
+    //    // Draw all entities
+    //    int maxIndex = sw::interfaces::IClientEntityList->GetHighestEntityIndex();
+    //    for (int entIndex = 0; entIndex < maxIndex; entIndex++)
+    //    {
+    //        sw::iface::IClientEntity* entity = sw::interfaces::IClientEntityList->GetClientEntity(entIndex);
+
+    //        if (entity == nullptr) continue;
+    //        //sw::iface::IClientNetworkable* networkable = entity->GetClientNetworkable();
+    //        //if (networkable == nullptr) continue;
+
+    //        //sw::interfaces::ICvar->ConsoleDPrintf("Entity '%x' dormant: %s\n", entIndex, networkable->IsDormant() ? "ye" : "na");
+
+    //        //sw::iface::C_BaseEntity* base = entity->GetBaseEntity();
+    //        //if (base == nullptr) continue;
+
+    //        sw::iface::Vector pos3d; //= entity->GetEyePosition();
+    //        pos3d.x = 0;
+    //        pos3d.y = 0;
+    //        pos3d.z = 0;
+    //        sw::iface::Vector2D pos2d = sw::util::WorldToScreen(pos3d);
+
+    //        sw::interfaces::ISurface->DrawSetColor(0, 0, 255, 255);
+    //        sw::interfaces::ISurface->DrawFilledRect(pos2d.x - 2, pos2d.y - 2, pos2d.x + 2, pos2d.y + 2);
+    //    } 
+
+    //    // for (wchar_t i = 0; i < 10; i++)
+    //    // {
+    //    //     wchar_t val = i + fontoff;
+    //    //     sw::interfaces::ISurface->DrawSetTextPos(50 * i, y + 50);
+    //    //     sw::interfaces::ISurface->DrawPrintText(&val, wcslen(&val));
+    //    // }
+    //}
 }
 
 sw::hooks::CreateMoveFn oCreateMove;
@@ -254,4 +259,6 @@ void sw::hooks::UnhookAll()
     SvCheats->RestoreOld();
     IGameEventManager2->RestoreOld();
     IVModelRender->RestoreOld();
+
+    interfaces::IGameEventManager2->RemoveListener(m_dummy_event_listener);
 }

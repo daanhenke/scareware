@@ -19,6 +19,7 @@ namespace sw::hacks::misc
 	void RemoveRecoil(iface::FrameStage stage);
 
 	void MemeRagdolls();
+	void NoscopeCrosshair();
 
 	void BulletTracers(iface::IGameEvent* event);
 }

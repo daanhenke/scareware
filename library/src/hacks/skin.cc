@@ -8,7 +8,10 @@ void sw::hacks::skin::FrameStageNotify()
 	static bool meme = false;
 	auto local_player = interfaces::GetLocalPlayer();
 
+
 	if (!local_player) return;
+	iface::PlayerInfo localInfo;
+	interfaces::IVEngineClient->GetPlayerInfo(local_player->Index(), localInfo);
 
 	if (! local_player->IsAlive())
 	{
@@ -29,6 +32,7 @@ void sw::hacks::skin::FrameStageNotify()
 		weapon->iItemIDHigh() = -1;
 		weapon->flFallbackWear() = 0.0;
 		weapon->nFallbackStatTrak() = 1337;
+		weapon->iAccountID() = localInfo.xuid & 0xFFFFFFFF;
 
 		if (weaponId == iface::WeaponId::Awp)
 		{
