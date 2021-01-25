@@ -29,16 +29,20 @@ namespace sw::iface
             return CALL_MEMBER(GetViewAngles_t, this, 18, std::ref(angles));
         }
 
+        LAZY_MEMBER(GetMaxClients, int, (), 20, (this));
+
         bool IsInGame()
         {
             DEFINE_MEMBER_GETTER(__thiscall * IsInGame_t, bool);
             return CALL_MEMBER_GETTER(IsInGame_t, this, 26);
         }
 
+        LAZY_MEMBER(CullBox, bool, (const Vector& mins, const Vector& maxs), 33, (this, mins, maxs));
+
         VMatrix& WorldToScreenMatrix()
         {
             DEFINE_MEMBER_GETTER(__thiscall* WorldToScreenMatrix_t, VMatrix&);
-            return CALL_MEMBER_GETTER(WorldToScreenMatrix_t, this, 36);
+            return CALL_MEMBER_GETTER(WorldToScreenMatrix_t, this, 37);
         }
     };
 }

@@ -3,6 +3,7 @@
 #include <cstring>
 #include "console.hh"
 #include "memory.hh"
+#include "util.hh"
 
 void sw::hacks::misc::Bunnyhop(iface::CUserCmd* cmd)
 {
@@ -286,18 +287,6 @@ void sw::hacks::misc::NoscopeCrosshair()
     interfaces::ISurface->DrawFilledRect(screen_width / 2 - crosshair_width / 2, screen_height / 2 - crosshair_length / 2, screen_width / 2 + crosshair_width / 2, screen_height / 2 + crosshair_length / 2);
 }
 
-sw::iface::Vector ClampAngle(sw::iface::Vector angle)
-{
-    if (angle.x > 89.f && angle.x <= 180.f) angle.x = 89.f;
-
-    while (angle.x > 180.f) angle.x -= 360.f;
-    while (angle.x < -89.f) angle.x = -89.f;
-    while (angle.y > 180.f) angle.y -= 360.f;
-    while (angle.y < -180.f) angle.y += 360.f;
-
-    return angle;
-}
-
 sw::iface::Vector oldAngle;
 void sw::hacks::misc::RecoilControl(iface::CUserCmd* cmd)
 {
@@ -308,10 +297,13 @@ void sw::hacks::misc::RecoilControl(iface::CUserCmd* cmd)
     {
         iface::Vector newAngle = localPlayer->aimPunchAngle();
         const float angleFix = 2;
-        cmd->viewangles.x -= (newAngle.x * angleFix);
-        cmd->viewangles.y -= (newAngle.y * angleFix);
 
-        oldAngle = ClampAngle(newAngle);
+        auto viewAnglesNew = iface::Vector(newAngle.x * angleFix, newAngle.y * angleFix);
+        auto viewClamped = util::ClampAngle(viewAnglesNew);
+        cmd->viewangles.x = viewClamped.x;
+        cmd->viewangles.y = viewClamped.y;
+
+        oldAngle = util::ClampAngle(newAngle);
     }
     else
     {

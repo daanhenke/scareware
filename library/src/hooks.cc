@@ -6,6 +6,8 @@
 #include "hacks/skin.hh"
 #include "hacks/misc.hh"
 #include "hacks/chams.hh"
+#include "hacks/grief.hh"
+#include "hacks/visuals.hh"
 #include "memory.hh"
 
 sw::vtable::VTableHook* sw::hooks::IBaseClientDLL = nullptr;
@@ -56,86 +58,34 @@ void __fastcall pt_hook(void* pPanels, int edx, unsigned int vguiPanel, bool for
         sw::logic::UnloadSelf();
     }
 
-    if (sw::interfaces::IInputSystem->IsButtonDown(sw::iface::ButtonCode_t::MOUSE_4))
-    {
-        sw::interfaces::ISurface->PlaySound("buttons/arena_switch_press_02.wav");
-    }
+    //if (sw::interfaces::IInputSystem->IsButtonDown(sw::iface::ButtonCode_t::MOUSE_4))
+    //{
+    //    sw::interfaces::ISurface->PlaySound("buttons/arena_switch_press_02.wav");
+    //}
 
-    if (sw::interfaces::IInputSystem->IsButtonDown(sw::iface::ButtonCode_t::MOUSE_5))
-    {
-        if (! fontoffChanged) {
-            fontoff += 10;
-            sw::interfaces::ICvar->ConsoleDPrintf("Fontoff: %d\n", fontoff);
-            fontoffChanged = true;
-        }
-    }
-    else {
-        fontoffChanged = false;
-    }
+    //if (sw::interfaces::IInputSystem->IsButtonDown(sw::iface::ButtonCode_t::MOUSE_5))
+    //{
+    //    if (! fontoffChanged) {
+    //        fontoff += 10;
+    //        sw::interfaces::ICvar->ConsoleDPrintf("Fontoff: %d\n", fontoff);
+    //        fontoffChanged = true;
+    //    }
+    //}
+    //else {
+    //    fontoffChanged = false;
+    //}
 
     //sw::interfaces::ICvar->ConsoleDPrintf("Client Number: %x, Pointer to Entity: %x\n", localid, localent);
     //sw::interfaces::ICvar->ConsoleDPrintf("Eye pos: X %.4f, Y %.4f, Z %.4f\n", eyePos.x, eyePos.y, eyePos.z);
     //sw::interfaces::ICvar->ConsoleDPrintf("Currently in game: %s\n", sw::interfaces::IVEngineClient->IsInGame() ? "Yes" : "No :(");
     //sw::interfaces::ICvar->ConsoleDPrintf("Entity count xDDD: %x\n", sw::interfaces::IClientEntityList->NumberOfEntities());
 
-    int x, y;
-    sw::interfaces::ISurface->SurfaceGetCursorPos(x, y);
-    //sw::interfaces::ICvar->ConsoleDPrintf("X %d, Y: %d\n", x, y);
-
     if (uiPanelId != 0 && vguiPanel == uiPanelId)
     {
         sw::hacks::misc::NoscopeCrosshair();
+        sw::hacks::visuals::Render();
+
     }
-
-    // Draw some random shit
-    //if (uiPanelId != 0 && vguiPanel == uiPanelId && shouldDrawUi)
-    //{
-    //    const wchar_t* str = L"Ewa Gibba";
-    //    sw::interfaces::ISurface->DrawSetTextFont(font);
-    //    sw::interfaces::ISurface->DrawSetTextColor(0, 0, 0, 100);
-    //    sw::interfaces::ISurface->DrawSetTextPos(x + 1, y + 1);
-    //    sw::interfaces::ISurface->DrawPrintText(str, wcslen(str));
-    //    sw::interfaces::ISurface->DrawSetTextColor(255, 0, 255, 255);
-    //    sw::interfaces::ISurface->DrawSetTextPos(x, y);
-    //    sw::interfaces::ISurface->DrawPrintText(str, wcslen(str));
-
-    //    sw::interfaces::ISurface->DrawSetTextFont(0xa1);
-    //    sw::interfaces::ISurface->DrawSetTextPos(x + 50, y);
-    //    const wchar_t* meme = L"\x52";
-    //    sw::interfaces::ISurface->DrawPrintText(meme, wcslen(meme));
-
-    //    // Draw all entities
-    //    int maxIndex = sw::interfaces::IClientEntityList->GetHighestEntityIndex();
-    //    for (int entIndex = 0; entIndex < maxIndex; entIndex++)
-    //    {
-    //        sw::iface::IClientEntity* entity = sw::interfaces::IClientEntityList->GetClientEntity(entIndex);
-
-    //        if (entity == nullptr) continue;
-    //        //sw::iface::IClientNetworkable* networkable = entity->GetClientNetworkable();
-    //        //if (networkable == nullptr) continue;
-
-    //        //sw::interfaces::ICvar->ConsoleDPrintf("Entity '%x' dormant: %s\n", entIndex, networkable->IsDormant() ? "ye" : "na");
-
-    //        //sw::iface::C_BaseEntity* base = entity->GetBaseEntity();
-    //        //if (base == nullptr) continue;
-
-    //        sw::iface::Vector pos3d; //= entity->GetEyePosition();
-    //        pos3d.x = 0;
-    //        pos3d.y = 0;
-    //        pos3d.z = 0;
-    //        sw::iface::Vector2D pos2d = sw::util::WorldToScreen(pos3d);
-
-    //        sw::interfaces::ISurface->DrawSetColor(0, 0, 255, 255);
-    //        sw::interfaces::ISurface->DrawFilledRect(pos2d.x - 2, pos2d.y - 2, pos2d.x + 2, pos2d.y + 2);
-    //    } 
-
-    //    // for (wchar_t i = 0; i < 10; i++)
-    //    // {
-    //    //     wchar_t val = i + fontoff;
-    //    //     sw::interfaces::ISurface->DrawSetTextPos(50 * i, y + 50);
-    //    //     sw::interfaces::ISurface->DrawPrintText(&val, wcslen(&val));
-    //    // }
-    //}
 }
 
 sw::hooks::CreateMoveFn oCreateMove;
@@ -147,6 +97,7 @@ bool __stdcall cm_hook(float frametime, sw::iface::CUserCmd* pCmd)
 
     sw::hacks::misc::Bunnyhop(pCmd);
     sw::hacks::misc::RecoilControl(pCmd);
+    //sw::hacks::grief::Blockbot(pCmd);
 
     return false;
 }

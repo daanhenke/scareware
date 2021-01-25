@@ -12,5 +12,9 @@
 
 namespace sw::util
 {
-    iface::Vector2D WorldToScreen(iface::Vector worldVector);
+    bool WorldToScreen(iface::Vector& point, iface::Vector& screen);
+
+    void VectorAngles(iface::Vector& forward, iface::Vector& angles);
+    iface::Vector CalcAngle(iface::Vector source, iface::Vector destination);
+    iface::Vector ClampAngle(sw::iface::Vector angle);
 }

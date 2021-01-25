@@ -8,6 +8,7 @@
 #include "iface/IClientThinkable.hh"
 #include "iface/WeaponId.hh"
 #include "iface/ClientClass.hh"
+#include "iface/ICollideable.hh"
 
 namespace sw::iface
 {
@@ -52,6 +53,8 @@ namespace sw::iface
             return CALL_MEMBER_GETTER(IsAlive_t, this + sizeof(uintptr_t) * 2, 2);
         }
 
+        LAZY_MEMBER(GetCollideable, ICollideable*, (), 3, (this));
+
         LAZY_MEMBER(ShouldDraw, bool, (), 3, (this + sizeof(uintptr_t)));
         LAZY_MEMBER(IsDormant, bool, (), 9, (this + sizeof(uintptr_t) * 2));
         LAZY_MEMBER(Index, int, (), 10, (this + sizeof(uintptr_t) * 2));
@@ -65,7 +68,8 @@ namespace sw::iface
         LAZY_MEMBER(GetMuzzleAttachment1stPerson, int, (IClientEntity* viewModel), 467, (this, viewModel));
         LAZY_MEMBER(GetMuzzleAttachment3rdPerson, int, (), 468, (this));
 
-        NETVAR_OFFSET(movetype, "CBaseEntity", "m_nRenderMode", 1, MoveType)
+        NETVAR_OFFSET(movetype, "CBaseEntity", "m_nRenderMode", 1, MoveType);
+        NETVAR(vecOrigin, "CBaseEntity", "m_vecOrigin", Vector);
         NETVAR(fFlags, "CBasePlayer", "m_fFlags", int);
         NETVAR(hMyWeapons, "CBaseCombatCharacter", "m_hMyWeapons", int[64]);
         NETVAR(iTeamNum, "CBaseEntity", "m_iTeamNum", int);
@@ -75,6 +79,7 @@ namespace sw::iface
 
         NETVAR(flFlashMaxAlpha, "CCSPlayer", "m_flFlashMaxAlpha", float);
         NETVAR(bIsScoped, "CCSPlayer", "m_bIsScoped", bool);
+        NETVAR(angEyeAngles, "CCSPlayer", "m_angEyeAngles", Vector);
 
         NETVAR(iItemDefinitionIndex, "CBaseAttributableItem", "m_iItemDefinitionIndex", short);
         NETVAR(iItemDefinitionIndex2, "CBaseAttributableItem", "m_iItemDefinitionIndex", WeaponId);

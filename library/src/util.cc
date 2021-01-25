@@ -1,21 +1,79 @@
 #include "util.hh"
+#include "iface/Vector.hh"
 
-// Untested
-sw::iface::Vector2D sw::util::WorldToScreen(sw::iface::Vector worldVector)
+// Absolutely perfect, dw
+bool sw::util::WorldToScreen(sw::iface::Vector& point, sw::iface::Vector& screen)
 {
-        iface::VMatrix& matrix = interfaces::IVEngineClient->WorldToScreenMatrix();
-        iface::Vector2D out;
+    auto matrix = interfaces::IVEngineClient->WorldToScreenMatrix();
+    bool inScreen = true;
 
-        int _w, _h;
-        interfaces::IVEngineClient->GetScreenSize(_w, _h);
-        out.x = (float) _w / 2;
-        out.y = (float) _h / 2;
+    screen.x = matrix._11 * point.x + matrix._12 * point.y + matrix._13 * point.z + matrix._14;
+    screen.y = matrix._21 * point.x + matrix._22 * point.y + matrix._23 * point.z + matrix._24;
+    screen.z = 0.f;
 
-        const float idk = matrix.m[3][0] * worldVector.x + matrix.m[3][1] * worldVector.y + matrix.m[3][2] * worldVector.z + matrix.m[3][3];
+    float w = matrix._41 * point.x + matrix._42 * point.y + matrix._43 * point.z + matrix._44;
 
-        matrix.m[0,2];
-        out.x *= 1.f + (matrix.m[0][0] * worldVector.x + matrix.m[0][1] * worldVector.y + matrix.m[0][2] * worldVector.z + matrix.m[0][3]) / idk;
-        out.y *= 1.f - (matrix.m[1][0] * worldVector.x + matrix.m[1][1] * worldVector.y + matrix.m[1][2] * worldVector.z + matrix.m[1][3]) / idk;
+    if (w < 0.001f)
+    {
+        inScreen = false;
+    }
+    else
+    {
+        float invertedw = 1.f / w;
+        screen.x *= invertedw;
+        screen.y *= invertedw;
 
-        return out;
+        int width, height;
+        interfaces::IVEngineClient->GetScreenSize(width, height);
+        float x = width / 2;
+        float y = height / 2;
+        x += .5 * screen.x * width + .5;
+        y -= .5 * screen.y * height + .5;
+        screen.x = x;
+        screen.y = y;
+    }
+
+    return inScreen;
+}
+
+void sw::util::VectorAngles(iface::Vector& forward, iface::Vector& angles)
+{
+    if (forward.y == 0.f && forward.x == 0.f)
+    {
+        angles.x = (forward.z > 0.f) ? 270.f : 90.f;
+        angles.y = 0.f;
+    }
+    else
+    {
+        angles.x = atan2(-forward.z, forward.Length2D()) * -180 / M_PI;
+        angles.y = atan2(forward.y, forward.x) * 180 / M_PI;
+
+        if (angles.y > 90) angles.y -= 180;
+        else if (angles.y < 90) angles.y += 180;
+        else if(angles.y == 90) angles.y = 0;
+    }
+
+    angles.z = 0;
+}
+
+sw::iface::Vector sw::util::CalcAngle(iface::Vector source, iface::Vector destination)
+{
+    iface::Vector angle(0, 0, 0);
+    iface::Vector delta(source.x - destination.x, source.y - destination.y, source.z - destination.z);
+
+    VectorAngles(delta, angle);
+
+    return angle;
+}
+
+sw::iface::Vector sw::util::ClampAngle(sw::iface::Vector angle)
+{
+    if (angle.x > 89.f && angle.x <= 180.f) angle.x = 89.f;
+
+    while (angle.x > 180.f) angle.x -= 360.f;
+    while (angle.x < -89.f) angle.x = -89.f;
+    while (angle.y > 180.f) angle.y -= 360.f;
+    while (angle.y < -180.f) angle.y += 360.f;
+
+    return angle;
 }

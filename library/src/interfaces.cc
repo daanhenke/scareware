@@ -20,6 +20,7 @@ sw::iface::IGameEventManager2*  sw::interfaces::IGameEventManager2 = nullptr;
 sw::iface::CGlobalVars*         sw::interfaces::CGlobalVars = nullptr;
 sw::iface::IVModelRender*       sw::interfaces::IVModelRender = nullptr;
 sw::iface::IStudioRender*       sw::interfaces::IStudioRender = nullptr;
+sw::iface::IVDebugOverlay*      sw::interfaces::IVDebugOverlay = nullptr;
 
 // Private map used for printing all the interface pointers
 std::map<std::string, uintptr_t> _iface_ptr_map;
@@ -82,10 +83,11 @@ bool sw::interfaces::FindInterfaces()
     IInputSystem = GetInterface<iface::IInputSystem>("InputSystemVersion", "inputsystem");
     IVEngineClient = GetInterface<iface::IVEngineClient>("VEngineClient", "engine");
     IClientEntityList = GetInterface<iface::IClientEntityList>("VClientEntityList", "client");
-    IMaterialSystem = GetInterface<iface::IMaterialSystem>("VMaterialSystem080", "materialsystem");
+    IMaterialSystem = GetInterface<iface::IMaterialSystem>("VMaterialSystem", "materialsystem");
     IGameEventManager2 = GetInterface<iface::IGameEventManager2>("GAMEEVENTSMANAGER002", "engine");
-    IVModelRender = GetInterface<iface::IVModelRender>("VEngineModel016", "engine");
-    IStudioRender = GetInterface<iface::IStudioRender>("VStudioRender026", "studiorender");
+    IVModelRender = GetInterface<iface::IVModelRender>("VEngineModel", "engine");
+    IStudioRender = GetInterface<iface::IStudioRender>("VStudioRender", "studiorender");
+    IVDebugOverlay = GetInterface<iface::IVDebugOverlay>("VDebugOverlay", "engine");
     
     // These interfaces don't have one, get them using magic instead
     ClientModeShared = **reinterpret_cast<iface::ClientModeShared ***>( ( *reinterpret_cast<uintptr_t **>( IBaseClientDLL ) )[ 10 ] + 0x5 );
