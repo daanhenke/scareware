@@ -285,3 +285,37 @@ void sw::hacks::misc::NoscopeCrosshair()
     interfaces::ISurface->DrawFilledRect(screen_width / 2 - crosshair_length / 2, screen_height / 2 - crosshair_width / 2, screen_width / 2 + crosshair_length / 2, screen_height / 2 + crosshair_width / 2);
     interfaces::ISurface->DrawFilledRect(screen_width / 2 - crosshair_width / 2, screen_height / 2 - crosshair_length / 2, screen_width / 2 + crosshair_width / 2, screen_height / 2 + crosshair_length / 2);
 }
+
+sw::iface::Vector ClampAngle(sw::iface::Vector angle)
+{
+    if (angle.x > 89.f && angle.x <= 180.f) angle.x = 89.f;
+
+    while (angle.x > 180.f) angle.x -= 360.f;
+    while (angle.x < -89.f) angle.x = -89.f;
+    while (angle.y > 180.f) angle.y -= 360.f;
+    while (angle.y < -180.f) angle.y += 360.f;
+
+    return angle;
+}
+
+sw::iface::Vector oldAngle;
+void sw::hacks::misc::RecoilControl(iface::CUserCmd* cmd)
+{
+    auto localPlayer = interfaces::GetLocalPlayer();
+    if (!localPlayer) return;
+
+    if (cmd->buttons & iface::IN_ATTACK)
+    {
+        iface::Vector newAngle = localPlayer->aimPunchAngle();
+        const float angleFix = 2.5;
+        cmd->viewangles.x += (oldAngle.x - (newAngle.x * angleFix));
+        cmd->viewangles.y += (oldAngle.y - (newAngle.y * angleFix));
+        cmd->viewangles.z = 0;
+
+        oldAngle = ClampAngle(newAngle);
+    }
+    else
+    {
+        oldAngle.x = oldAngle.y = oldAngle.z = 0;
+    }
+}

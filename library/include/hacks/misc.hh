@@ -17,6 +17,7 @@ namespace sw::hacks::misc
 	void NoSmoke(iface::FrameStage stage);
 
 	void RemoveRecoil(iface::FrameStage stage);
+	void RecoilControl(iface::CUserCmd* cmd);
 
 	void MemeRagdolls();
 	void NoscopeCrosshair();

@@ -146,6 +146,7 @@ bool __stdcall cm_hook(float frametime, sw::iface::CUserCmd* pCmd)
     if (!pCmd->command_number) return res;
 
     sw::hacks::misc::Bunnyhop(pCmd);
+    sw::hacks::misc::RecoilControl(pCmd);
 
     return false;
 }
