@@ -1,1 +1,1 @@
-.\build\injector\Release\scareinjector.exe csgo.exe .\build\library\Release\scareware.dll
+.\out\build\x86-Release\injector\scareinjector.exe csgo.exe .\out\build\x86-Release\library\scareware.dll

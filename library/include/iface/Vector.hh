@@ -27,22 +27,22 @@ namespace sw::iface
             return sqrt(sqrtVal);
         }
 
-        inline Vector& operator+(Vector& rhs)
+        inline Vector operator+(Vector& rhs)
         {
             return Vector(x + rhs.x, y + rhs.y, z + rhs.z);
         }
 
-        inline Vector& operator-(Vector& rhs)
+        inline Vector operator-(Vector& rhs)
         {
             return Vector(x - rhs.x, y - rhs.y, z - rhs.z);
         }
 
-        inline Vector& operator*(Vector& rhs)
+        inline Vector operator*(Vector& rhs)
         {
             return Vector(x * rhs.x, y * rhs.y, z * rhs.z);
         }
 
-        inline Vector& operator*(float rhs)
+        inline Vector operator*(float rhs)
         {
             return Vector(x * rhs, y * rhs, z * rhs);
         }

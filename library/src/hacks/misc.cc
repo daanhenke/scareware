@@ -12,6 +12,7 @@ void sw::hacks::misc::Bunnyhop(iface::CUserCmd* cmd)
     if (!local_player) return;
     if (!local_player->IsAlive()) return;
     if (!(cmd->buttons & sw::iface::IN_JUMP)) return;
+    if (local_player->movetype() == iface::MoveType::LADDER) return;
     if (!(local_player->fFlags() & 1)) cmd->buttons &= ~sw::iface::IN_JUMP;
 }
 
@@ -312,4 +313,14 @@ void sw::hacks::misc::RecoilControl(iface::CUserCmd* cmd)
     {
         oldAngle.x = oldAngle.y = oldAngle.z = 0;
     }
+}
+
+void sw::hacks::misc::DisablePostProcessing()
+{
+    auto matvar = interfaces::ICvar->FindVar("mat_postprocess_enable");
+
+    if (!matvar) {
+        return;
+    }
+    matvar->SetValue(0);
 }

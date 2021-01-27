@@ -23,4 +23,6 @@ namespace sw::hacks::misc
 	void NoscopeCrosshair();
 
 	void BulletTracers(iface::IGameEvent* event);
+
+	void DisablePostProcessing();
 }

@@ -115,6 +115,7 @@ void __fastcall fsn_hook(void* _this, int edx, sw::iface::FrameStage stage)
             sw::hacks::misc::NoFlash();
             sw::hacks::misc::MemeRagdolls();
             sw::hacks::misc::Remove3dSky();
+            sw::hacks::misc::DisablePostProcessing();
         }
         else if (stage == sw::iface::FrameStage::RENDER_START)
         {
