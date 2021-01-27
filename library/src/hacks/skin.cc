@@ -2,6 +2,7 @@
 #include "interfaces.hh"
 #include <cstring>
 #include "console.hh"
+#include "hacks/visuals.hh"
 
 void sw::hacks::skin::FrameStageNotify()
 {
@@ -31,7 +32,7 @@ void sw::hacks::skin::FrameStageNotify()
 		strcpy(weapon->szCustomName(), "VaporWare xDDDDD - daan");
 		weapon->iItemIDHigh() = -1;
 		weapon->flFallbackWear() = 0.0;
-		weapon->nFallbackStatTrak() = 1337;
+		weapon->nFallbackStatTrak() = visuals::Velocity == 1337;
 		weapon->iAccountID() = localInfo.xuid & 0xFFFFFFFF;
 
 		if (weaponId == iface::WeaponId::Awp)

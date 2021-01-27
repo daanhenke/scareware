@@ -58,10 +58,12 @@ namespace sw::iface
         LAZY_MEMBER(ShouldDraw, bool, (), 3, (this + sizeof(uintptr_t)));
         LAZY_MEMBER(IsDormant, bool, (), 9, (this + sizeof(uintptr_t) * 2));
         LAZY_MEMBER(Index, int, (), 10, (this + sizeof(uintptr_t) * 2));
+        LAZY_MEMBER(PostDataUpdate, void, (int updateType), 7, (this + sizeof(uintptr_t) * 2, updateType));
 
         LAZY_MEMBER(GetAttachment, bool, (int index, Vector& origin), 83, (this, index, std::ref(origin)));
 
         LAZY_MEMBER(IsPlayer, bool, (), 157, (this));
+        LAZY_MEMBER(IsWeapon, bool, (), 165, (this));
 
         LAZY_MEMBER(GetActiveWeapon, IClientEntity*, (), 267, (this));
         LAZY_MEMBER(GetWeaponType, WeaponType, (), 454, (this));
@@ -70,7 +72,9 @@ namespace sw::iface
 
         NETVAR_OFFSET(movetype, "CBaseEntity", "m_nRenderMode", 1, MoveType);
         NETVAR(vecOrigin, "CBaseEntity", "m_vecOrigin", Vector);
+        NETVAR(bSpotted, "CBaseEntity", "m_bSpotted", bool);
         NETVAR(fFlags, "CBasePlayer", "m_fFlags", int);
+        NETVAR(vecVelocity, "CBasePlayer", "m_vecVelocity[0]", Vector);
         NETVAR(hMyWeapons, "CBaseCombatCharacter", "m_hMyWeapons", int[64]);
         NETVAR(iTeamNum, "CBaseEntity", "m_iTeamNum", int);
         NETVAR(aimPunchAngle, "CBasePlayer", "m_aimPunchAngle", Vector);
@@ -93,5 +97,7 @@ namespace sw::iface
         NETVAR(iAccountID, "CBaseAttributableItem", "m_iAccountID", int);
 
         NETVAR(hWeaponWorldModel, "CBaseCombatWeapon", "m_hWeaponWorldModel", int);
+
+        PNETVAR(flFrozen, "CBaseAnimating", "m_flFrozen", float);
     };
 }

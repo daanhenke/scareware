@@ -68,12 +68,13 @@ sw::iface::Vector sw::util::CalcAngle(iface::Vector source, iface::Vector destin
 
 sw::iface::Vector sw::util::ClampAngle(sw::iface::Vector angle)
 {
-    if (angle.x > 89.f && angle.x <= 180.f) angle.x = 89.f;
+    if (angle.x > 89.f) angle.x = 89.f;
+    if (angle.x < -89.f) angle.x = -89.f;
 
-    while (angle.x > 180.f) angle.x -= 360.f;
-    while (angle.x < -89.f) angle.x = -89.f;
-    while (angle.y > 180.f) angle.y -= 360.f;
-    while (angle.y < -180.f) angle.y += 360.f;
+    if (angle.y > 180.f) angle.y = 180.f;
+    if (angle.y < -180.f) angle.y = -180.f;
+
+    angle.z = 0.f;
 
     return angle;
 }

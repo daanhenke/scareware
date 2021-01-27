@@ -204,16 +204,10 @@ void sw::hacks::misc::BulletTracers(iface::IGameEvent* event)
     auto localPlayer = interfaces::GetLocalPlayer();
     if (!localPlayer) return;
 
-    console::WriteFormat("got player: %x %x\n", GetUserId(localPlayer), event->GetInt("userid"));
-
     if (event->GetInt("userid") != GetUserId(localPlayer)) return;
-
-    console::WriteFormat("local shot\n");
 
     auto activeWeapon = localPlayer->GetActiveWeapon();
     if (!activeWeapon) return;
-
-    console::WriteFormat("got weapon\n");
 
     iface::BeamInfo_t beamInfo;
     if (!localPlayer->ShouldDraw())
@@ -230,8 +224,6 @@ void sw::hacks::misc::BulletTracers(iface::IGameEvent* event)
 
         if (!worldModel->GetAttachment(activeWeapon->GetMuzzleAttachment3rdPerson(), beamInfo.m_vecStart)) return;
     }
-
-    console::WriteFormat("setting up beam\n");
 
     beamInfo.m_nType = 0;
     beamInfo.m_flLife = 0.f;
@@ -272,19 +264,30 @@ void sw::hacks::misc::NoscopeCrosshair()
 {
     auto localPlayer = interfaces::GetLocalPlayer();
     if (!localPlayer) return;
-    if (localPlayer->bIsScoped()) return;
+
+    auto weaponDebugSpreadShow = interfaces::ICvar->FindVar("weapon_debug_spread_show");
+    if (!weaponDebugSpreadShow) return;
+
     auto weapon = localPlayer->GetActiveWeapon();
     if (!weapon) return;
-    if (weapon->GetWeaponType() != iface::WeaponType::SniperRifle) return;
 
-    int screen_width, screen_height;
+    if (weapon->GetWeaponType() != iface::WeaponType::SniperRifle || localPlayer->bIsScoped())
+    {
+        weaponDebugSpreadShow->SetValue(0);
+    }
+    else
+    {
+        weaponDebugSpreadShow->SetValue(3);
+    }
+
+    /*int screen_width, screen_height;
     int crosshair_length = 16;
     int crosshair_width = 3;
     interfaces::IVEngineClient->GetScreenSize(screen_width, screen_height);
 
     interfaces::ISurface->DrawSetColor(255, 0, 0, 255);
     interfaces::ISurface->DrawFilledRect(screen_width / 2 - crosshair_length / 2, screen_height / 2 - crosshair_width / 2, screen_width / 2 + crosshair_length / 2, screen_height / 2 + crosshair_width / 2);
-    interfaces::ISurface->DrawFilledRect(screen_width / 2 - crosshair_width / 2, screen_height / 2 - crosshair_length / 2, screen_width / 2 + crosshair_width / 2, screen_height / 2 + crosshair_length / 2);
+    interfaces::ISurface->DrawFilledRect(screen_width / 2 - crosshair_width / 2, screen_height / 2 - crosshair_length / 2, screen_width / 2 + crosshair_width / 2, screen_height / 2 + crosshair_length / 2);*/
 }
 
 sw::iface::Vector oldAngle;
@@ -298,7 +301,7 @@ void sw::hacks::misc::RecoilControl(iface::CUserCmd* cmd)
         iface::Vector newAngle = localPlayer->aimPunchAngle();
         const float angleFix = 2;
 
-        auto viewAnglesNew = iface::Vector(newAngle.x * angleFix, newAngle.y * angleFix);
+        auto viewAnglesNew = iface::Vector(cmd->viewangles.x - newAngle.x * angleFix, cmd->viewangles.y - newAngle.y * angleFix);
         auto viewClamped = util::ClampAngle(viewAnglesNew);
         cmd->viewangles.x = viewClamped.x;
         cmd->viewangles.y = viewClamped.y;

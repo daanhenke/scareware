@@ -38,10 +38,10 @@ namespace sw::netvars
 #define NETVAR(funcname, class_name, var_name, type) \
     NETVAR_OFFSET(funcname, class_name, var_name, 0, type)
 
-#define PNETVAR_OFFSET(funcname, classname, varname, type) \
+#define PNETVAR_OFFSET(funcname, classname, varname, offset, type) \
 [[nodiscard]] auto funcname() \
 { \
-	return reinterpret_cast<std::add_pointer_t<type>>(this + sw::netvars::manager->GetOffset(classname "::" varname); \
+	return reinterpret_cast<std::add_pointer_t<type>>(this + sw::netvars::manager->GetOffset(classname "::" varname) + offset); \
 }
 
-#define PNETVAR(funcname, classname, varname, type) PNETVAR_OFFSET(funcname, classname, varname, type)
+#define PNETVAR(funcname, classname, varname, type) PNETVAR_OFFSET(funcname, classname, varname, 0, type)
