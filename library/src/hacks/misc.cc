@@ -317,34 +317,32 @@ void sw::hacks::misc::RecoilControl(iface::CUserCmd* cmd)
 
 void sw::hacks::misc::DisablePostProcessing()
 {
-    auto matvar = interfaces::ICvar->FindVar("mat_postprocess_enable");
+    auto matPostprocessEnable = interfaces::ICvar->FindVar("mat_postprocess_enable");
+    if (!matPostprocessEnable) return;
 
-    if (!matvar) {
-        return;
-    }
-    matvar->SetValue(0);
+    matPostprocessEnable->SetValue(0);
 }
 
 
 void sw::hacks::misc::NadePreview()
 {
-    auto nadepreview = interfaces::ICvar->FindVar("cl_grenadepreview");
+    auto clGrenadepreview = interfaces::ICvar->FindVar("cl_grenadepreview");
+    if (!clGrenadepreview) return;
 
-    if (!nadepreview) {
-        return;
-    }
-    nadepreview->SetValue(1);
+    clGrenadepreview->SetValue(1);
 }
 
 void sw::hacks::misc::HitSound(iface::IGameEvent* event)
 {
-    sw::console::WriteFormat("hefdsvfasads \n");
-    auto playerId = event->GetInt("attacker");
     auto localPlayer = sw::interfaces::GetLocalPlayer();
+    if (!localPlayer) return;
+
+    auto attackerId = event->GetInt("attacker");
+    
     iface::PlayerInfo info;
     interfaces::IVEngineClient->GetPlayerInfo(localPlayer->Index(), info);
-    if (info.userId != playerId) return;
 
-    sw::console::WriteFormat("hehe %x %x \n", localPlayer->Index(), playerId);
+    if (info.userId != attackerId) return;
+
     sw::interfaces::ISurface->PlaySound("buttons/arena_switch_press_02.wav");
 }
