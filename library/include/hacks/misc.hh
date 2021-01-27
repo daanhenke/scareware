@@ -25,4 +25,7 @@ namespace sw::hacks::misc
 	void BulletTracers(iface::IGameEvent* event);
 
 	void DisablePostProcessing();
+	void HitSound(iface::IGameEvent* event);
+
+	void NadePreview();
 }

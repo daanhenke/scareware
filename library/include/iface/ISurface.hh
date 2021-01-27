@@ -100,5 +100,7 @@ namespace sw::iface
             DEFINE_MEMBER(__thiscall* SurfaceGetCursorPos_t, void, int&, int&);
             CALL_MEMBER(SurfaceGetCursorPos_t, this, 100, x, y);
         }
+
+        LAZY_MEMBER(GetTextSize, void, (HFont font, const wchar_t* text, int* wide, int* tall), 79, (this, font, text, wide, tall));
     };
 }

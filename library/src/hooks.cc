@@ -116,6 +116,7 @@ void __fastcall fsn_hook(void* _this, int edx, sw::iface::FrameStage stage)
             sw::hacks::misc::MemeRagdolls();
             sw::hacks::misc::Remove3dSky();
             sw::hacks::misc::DisablePostProcessing();
+            sw::hacks::misc::NadePreview();
         }
         else if (stage == sw::iface::FrameStage::RENDER_START)
         {
@@ -149,6 +150,11 @@ bool __fastcall fecs_hook(void* _this, int edx, sw::iface::IGameEvent* event)
     if (! std::strcmp(eventName, "bullet_impact"))
     {
         sw::hacks::misc::BulletTracers(event);
+    }
+
+    else if (!std::strcmp(eventName, "player_hurt"))
+    {
+        sw::hacks::misc::HitSound(event);
     }
 
     return oFireEventsClientSide(_this, edx, event);

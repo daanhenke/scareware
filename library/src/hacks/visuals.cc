@@ -5,6 +5,7 @@
 #include <algorithm>
 #include "interfaces.hh"
 #include "console.hh"
+#include "iface/Color.hh"
 
 #undef min
 #undef max
@@ -86,17 +87,30 @@ void sw::hacks::visuals::RenderVelocity()
 
 	auto vecVelocity = localPlayer->vecVelocity();
 	vecVelocity.z = 0;
-	int velocity = vecVelocity.Length();
+	int velocity = round(vecVelocity.Length());
 
 	std::wstring velocityString = std::to_wstring(velocity);
 
 	sw::interfaces::ISurface->DrawSetTextFont(baseFont);
-	sw::interfaces::ISurface->DrawSetTextColor(255, 255, 255, 255);
+
+	int textW, textH;
+	sw::interfaces::ISurface->GetTextSize(baseFont, velocityString.c_str(), &textW, &textH);
 
 	int width, height;
 	sw::interfaces::IVEngineClient->GetScreenSize(width, height);
-	sw::interfaces::ISurface->DrawSetTextPos(width / 2, height / 4 * 3);
+
+	sw::interfaces::ISurface->DrawSetTextColor(0, 0, 0, 200);
+	sw::interfaces::ISurface->DrawSetTextPos(width / 2 + 2 - textW / 2, height / 5 * 4 + 2);
 	sw::interfaces::ISurface->DrawPrintText(velocityString.c_str(), velocityString.length());
+
+	float rainbow = velocity / 250.f;
+	if (rainbow > 1.f) rainbow = 1.f;
+	iface::Color Result = iface::MixColors(iface::Color(255, 180, 0), iface::Color(0, 255, 0), rainbow);
+
+	sw::interfaces::ISurface->DrawSetTextColor(Result.r, Result.g, Result.b, Result.a);
+	sw::interfaces::ISurface->DrawSetTextPos(width / 2 - textW / 2, height / 5 * 4);
+	sw::interfaces::ISurface->DrawPrintText(velocityString.c_str(), velocityString.length());
+
 
 	auto weapon = localPlayer->GetActiveWeapon();
 	if (!weapon) return;
@@ -113,7 +127,7 @@ void sw::hacks::visuals::Render()
 	if (baseFont == 0)
 	{
 		baseFont = sw::interfaces::ISurface->CreateFont();
-		sw::interfaces::ISurface->SetFontGlyphSet(baseFont, "Arial", 15, 450, 0, 0, sw::iface::EFontFlags::FONTFLAG_ANTIALIAS);
+		sw::interfaces::ISurface->SetFontGlyphSet(baseFont, "Arial", 25, 850, 0, 0, sw::iface::EFontFlags::FONTFLAG_ANTIALIAS);
 	}
 
 	for (int i = 1; i < interfaces::IClientEntityList->GetHighestEntityIndex(); i++)

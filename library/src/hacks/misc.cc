@@ -324,3 +324,27 @@ void sw::hacks::misc::DisablePostProcessing()
     }
     matvar->SetValue(0);
 }
+
+
+void sw::hacks::misc::NadePreview()
+{
+    auto nadepreview = interfaces::ICvar->FindVar("cl_grenadepreview");
+
+    if (!nadepreview) {
+        return;
+    }
+    nadepreview->SetValue(1);
+}
+
+void sw::hacks::misc::HitSound(iface::IGameEvent* event)
+{
+    sw::console::WriteFormat("hefdsvfasads \n");
+    auto playerId = event->GetInt("attacker");
+    auto localPlayer = sw::interfaces::GetLocalPlayer();
+    iface::PlayerInfo info;
+    interfaces::IVEngineClient->GetPlayerInfo(localPlayer->Index(), info);
+    if (info.userId != playerId) return;
+
+    sw::console::WriteFormat("hehe %x %x \n", localPlayer->Index(), playerId);
+    sw::interfaces::ISurface->PlaySound("buttons/arena_switch_press_02.wav");
+}
