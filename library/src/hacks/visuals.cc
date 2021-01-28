@@ -107,13 +107,8 @@ void sw::hacks::visuals::RenderVelocity()
 	int width, height;
 	sw::interfaces::IVEngineClient->GetScreenSize(width, height);
 
-	float rainbow = velocity / 250.f;
-	if (rainbow > 1.f) rainbow = 1.f;
-	iface::Color Result = util::MixColors(iface::Color(255, 180, 0), iface::Color(0, 255, 0), rainbow);
-
-	float lastRainbow = lastVelocity / 250.f;
-	if (lastRainbow > 1.f) lastRainbow = 1.f;
-	iface::Color lastResult = util::MixColors(iface::Color(255, 180, 0), iface::Color(0, 255, 0), lastRainbow);
+	iface::Color Result = util::MixColors(iface::Color(255, 180, 0), iface::Color(0, 255, 0), std::min(1.f, velocity / 250.f));
+	iface::Color lastResult = util::MixColors(iface::Color(255, 180, 0), iface::Color(0, 255, 0), std::min(1.f, lastVelocity /250.f));
 
 	draw::DrawShadedText(draw::FontDefault, velocityString, width / 2 - textW / 2, height / 5 * 4, Result);
 	draw::DrawShadedText(draw::FontDefault, lastVelocityString, width / 2 - textW2 / 2, height / 5 * 4 + textH + 5, lastResult);

@@ -133,7 +133,7 @@ void sw::hacks::misc::NoFlash()
 
     if (!localPlayer) return;
 
-    if (localPlayer->flFlashMaxAlpha() > 0.f) localPlayer->flFlashMaxAlpha() = 0.f;
+    if (localPlayer->flFlashMaxAlpha() > 0.f) localPlayer->flFlashMaxAlpha() = 50.f;
 }
 
 void sw::hacks::misc::NoSmoke(iface::FrameStage stage)
