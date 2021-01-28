@@ -17,6 +17,18 @@ namespace sw::iface
         LADDER = 9
     };
 
+    enum class ObsMode {
+        OBS_MODE_NONE = 0,	// not in spectator mode
+        OBS_MODE_DEATHCAM,	// special mode for death cam animation
+        OBS_MODE_FREEZECAM,	// zooms to a target, and freeze-frames on them
+        OBS_MODE_FIXED,		// view from a fixed camera position
+        OBS_MODE_IN_EYE,	// follow a player in first person view
+        OBS_MODE_CHASE,		// follow a player in third person view
+        OBS_MODE_ROAMING,	// free roaming
+
+        NUM_OBSERVER_MODES,
+    };
+
     enum class WeaponType {
         Knife = 0,
         Pistol,
@@ -64,6 +76,9 @@ namespace sw::iface
 
         LAZY_MEMBER(IsPlayer, bool, (), 157, (this));
         LAZY_MEMBER(IsWeapon, bool, (), 165, (this));
+
+        LAZY_MEMBER(GetObserverMode, ObsMode, (), 293, (this));
+        LAZY_MEMBER(GetObserverTarget, IClientEntity*, (), 294, (this));
 
         LAZY_MEMBER(GetActiveWeapon, IClientEntity*, (), 267, (this));
         LAZY_MEMBER(GetWeaponType, WeaponType, (), 454, (this));
