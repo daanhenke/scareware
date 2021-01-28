@@ -4,6 +4,7 @@
 #include "iface/Vector.hh"
 #include "iface/VMatrix.hh"
 #include "interfaces.hh"
+#include "iface/Color.hh"
 #include <Windows.h>
 
 #include <intrin.h>
@@ -17,4 +18,6 @@ namespace sw::util
     void VectorAngles(iface::Vector& forward, iface::Vector& angles);
     iface::Vector CalcAngle(iface::Vector source, iface::Vector destination);
     iface::Vector ClampAngle(sw::iface::Vector angle);
+
+    iface::Color  MixColors(iface::Color a, iface::Color b, float mix);
 }

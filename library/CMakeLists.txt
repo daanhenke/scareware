@@ -14,7 +14,7 @@ target_sources(scareware
         src/util.cc
         src/netvars.cc
         src/config.cc
-        #src/events.cc
+        src/draw.cc
         src/hacks/skin.cc
         src/hacks/misc.cc
         src/hacks/chams.cc

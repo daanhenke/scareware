@@ -7,6 +7,8 @@
 #include "memory.hh"
 #include "config.hh"
 #include "hacks/chams.hh"
+#include "draw.hh"
+
 /*
     Unloads our code, since it isn't a real module anyway all we need to do is free the memory we use
     This is quite tricky since freeing it will mean the return instruction of VirtualFree will crash our game because the function it came from doesn't exist anymore
@@ -56,6 +58,7 @@ void sw::logic::Initialize()
     interfaces::FindInterfaces();
     memory::FindRandomPtrs();
     netvars::manager = new sw::netvars::NetvarManager();
+    draw::Initialize();
     hooks::HookAll();
     hacks::chams::Initialize();
 }

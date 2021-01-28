@@ -78,3 +78,15 @@ sw::iface::Vector sw::util::ClampAngle(sw::iface::Vector angle)
 
     return angle;
 }
+
+sw::iface::Color sw::util::MixColors(iface::Color a, iface::Color b, float mix)
+{
+    iface::Color result;
+
+    result.r = a.r + mix * (b.r - a.r);
+    result.g = a.g + mix * (b.g - a.g);
+    result.b = a.b + mix * (b.b - a.b);
+    result.a = a.a + mix * (b.a - a.a);
+
+    return result;
+}
