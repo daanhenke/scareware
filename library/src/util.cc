@@ -90,3 +90,5 @@ sw::iface::Color sw::util::MixColors(iface::Color a, iface::Color b, float mix)
 
     return result;
 }
+
+std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> sw::util::wstring_converter;

@@ -42,5 +42,5 @@ void sw::draw::DrawShadedText(iface::HFont font, std::wstring text, int x, int y
 void sw::draw::DrawFillRect(int x, int y, int width, int height, iface::Color color)
 {
 	interfaces::ISurface->DrawSetColor(color.r, color.g, color.b, color.a);
-	interfaces::ISurface->DrawFilledRect(x, y, x + width, y + width);
+	interfaces::ISurface->DrawFilledRect(x, y, x + width, y + height);
 }

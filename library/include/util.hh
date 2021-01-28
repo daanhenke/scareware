@@ -6,6 +6,8 @@
 #include "interfaces.hh"
 #include "iface/Color.hh"
 #include <Windows.h>
+#include <locale>
+#include <codecvt>
 
 #include <intrin.h>
 #pragma intrinsic(_ReturnAddress)
@@ -20,4 +22,6 @@ namespace sw::util
     iface::Vector ClampAngle(sw::iface::Vector angle);
 
     iface::Color  MixColors(iface::Color a, iface::Color b, float mix);
+
+    extern std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> wstring_converter;
 }

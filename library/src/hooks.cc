@@ -35,9 +35,6 @@ void __fastcall pt_hook(void* pPanels, int edx, unsigned int vguiPanel, bool for
         if (strstr(sw::interfaces::IPanel->GetName(vguiPanel), "MatSystemTopPanel"))
         {
             uiPanelId = vguiPanel;
-            sw::interfaces::ICvar->ConsoleDPrintf("Found MatSystemTopPanel: 0x%x", vguiPanel);
-            font = sw::interfaces::ISurface->CreateFont();
-            sw::interfaces::ISurface->SetFontGlyphSet(font, "Arial", 40, 650, 0, 0, sw::iface::EFontFlags::FONTFLAG_ANTIALIAS);
         }
     }
     
@@ -57,28 +54,6 @@ void __fastcall pt_hook(void* pPanels, int edx, unsigned int vguiPanel, bool for
     {
         sw::logic::UnloadSelf();
     }
-
-    //if (sw::interfaces::IInputSystem->IsButtonDown(sw::iface::ButtonCode_t::MOUSE_4))
-    //{
-    //    sw::interfaces::ISurface->PlaySound("buttons/arena_switch_press_02.wav");
-    //}
-
-    //if (sw::interfaces::IInputSystem->IsButtonDown(sw::iface::ButtonCode_t::MOUSE_5))
-    //{
-    //    if (! fontoffChanged) {
-    //        fontoff += 10;
-    //        sw::interfaces::ICvar->ConsoleDPrintf("Fontoff: %d\n", fontoff);
-    //        fontoffChanged = true;
-    //    }
-    //}
-    //else {
-    //    fontoffChanged = false;
-    //}
-
-    //sw::interfaces::ICvar->ConsoleDPrintf("Client Number: %x, Pointer to Entity: %x\n", localid, localent);
-    //sw::interfaces::ICvar->ConsoleDPrintf("Eye pos: X %.4f, Y %.4f, Z %.4f\n", eyePos.x, eyePos.y, eyePos.z);
-    //sw::interfaces::ICvar->ConsoleDPrintf("Currently in game: %s\n", sw::interfaces::IVEngineClient->IsInGame() ? "Yes" : "No :(");
-    //sw::interfaces::ICvar->ConsoleDPrintf("Entity count xDDD: %x\n", sw::interfaces::IClientEntityList->NumberOfEntities());
 
     if (uiPanelId != 0 && vguiPanel == uiPanelId)
     {

@@ -7,6 +7,7 @@
 #include "console.hh"
 #include "iface/Color.hh"
 #include "draw.hh"
+#include <vector>
 
 #undef min
 #undef max
@@ -112,8 +113,6 @@ void sw::hacks::visuals::RenderVelocity()
 
 	draw::DrawShadedText(draw::FontDefault, velocityString, width / 2 - textW / 2, height / 5 * 4, Result);
 	draw::DrawShadedText(draw::FontDefault, lastVelocityString, width / 2 - textW2 / 2, height / 5 * 4 + textH + 5, lastResult);
-	
-
 
 	auto weapon = localPlayer->GetActiveWeapon();
 	if (!weapon) return;
@@ -145,4 +144,51 @@ void sw::hacks::visuals::Render()
 	}
 
 	RenderVelocity();
+	RenderSpectatorList();
+}
+
+void sw::hacks::visuals::RenderSpectatorList()
+{
+	auto localPlayer = interfaces::GetLocalPlayer();
+	if (!localPlayer) return;
+
+	int scr_width, scr_height;
+	interfaces::IVEngineClient->GetScreenSize(scr_width, scr_height);
+
+	std::vector<std::wstring> spectatingEntityNames;
+	spectatingEntityNames.push_back(L"Spectating:");
+	for (int entityId = 1; entityId < interfaces::IClientEntityList->GetHighestEntityIndex(); entityId++)
+	{
+		auto entity = interfaces::IClientEntityList->GetClientEntity(entityId);
+		if (!entity) continue;
+		if (!entity->IsPlayer()) continue;
+		if (entity->GetObserverMode() == iface::ObsMode::OBS_MODE_NONE) continue;
+		if (entity->GetObserverTarget() != localPlayer) continue;
+
+		iface::PlayerInfo info;
+		interfaces::IVEngineClient->GetPlayerInfo(entity->Index(), info);
+		auto input_string = std::string(info.name);
+		std::wstring output_string(input_string.size(), L' ');
+		output_string.resize(mbstowcs(&output_string[0], input_string.c_str(), input_string.size()));
+		spectatingEntityNames.push_back(output_string);
+	}
+
+	int window_width = 0, window_height = 0;
+	for (auto name : spectatingEntityNames)
+	{
+		int width, height;
+		interfaces::ISurface->GetTextSize(draw::FontDefault, name.c_str(), &width, &height);
+		window_height += height + 5;
+		window_width = std::max(10 + width, window_width);
+	}
+
+	draw::DrawFillRect(scr_width - window_width, 0, window_width, window_height, iface::Color(50, 50, 50, 255));
+	int text_offset_y = 5;
+	for (auto name : spectatingEntityNames)
+	{
+		int char_w, char_h;
+		interfaces::ISurface->GetTextSize(draw::FontDefault, name.c_str(), &char_w, &char_h);
+		draw::DrawText(draw::FontDefault, name, scr_width - char_w - 5, text_offset_y);
+		text_offset_y += char_h + 5;
+	}
 }
