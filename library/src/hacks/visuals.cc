@@ -88,30 +88,35 @@ void sw::hacks::visuals::RenderVelocity()
 	auto vecVelocity = localPlayer->vecVelocity();
 	vecVelocity.z = 0;
 	int velocity = round(vecVelocity.Length());
+	static int lastVelocity = 0;
+	static int lastFlags = localPlayer->fFlags();
 	Velocity = velocity;
+	if (!(localPlayer->fFlags() & 1) && lastFlags & 1) lastVelocity = velocity;
+	lastFlags = localPlayer->fFlags();
 
 	std::wstring velocityString = std::to_wstring(velocity);
-
-	/*sw::interfaces::ISurface->DrawSetTextFont(draw::FontDefault);*/
+	std::wstring lastVelocityString = L"";
+	if (lastVelocity > 0 && !(localPlayer->fFlags() & 1)) lastVelocityString = L"(" + std::to_wstring(lastVelocity) + L")";
 
 	int textW, textH;
+	int textW2, textH2;
 	sw::interfaces::ISurface->GetTextSize(draw::FontDefault, velocityString.c_str(), &textW, &textH);
+	sw::interfaces::ISurface->GetTextSize(draw::FontDefault, lastVelocityString.c_str(), &textW2, &textH2);
+
 
 	int width, height;
 	sw::interfaces::IVEngineClient->GetScreenSize(width, height);
 
-	/*sw::interfaces::ISurface->DrawSetTextColor(0, 0, 0, 200);
-	sw::interfaces::ISurface->DrawSetTextPos(width / 2 + 2 - textW / 2, height / 5 * 4 + 2);
-	sw::interfaces::ISurface->DrawPrintText(velocityString.c_str(), velocityString.length());*/
-
 	float rainbow = velocity / 250.f;
 	if (rainbow > 1.f) rainbow = 1.f;
 	iface::Color Result = util::MixColors(iface::Color(255, 180, 0), iface::Color(0, 255, 0), rainbow);
-	draw::DrawShadedText(draw::FontDefault, velocityString, width / 2 - textW / 2, height / 5 * 4, Result);
 
-	/*sw::interfaces::ISurface->DrawSetTextColor(Result.r, Result.g, Result.b, Result.a);
-	sw::interfaces::ISurface->DrawSetTextPos(width / 2 - textW / 2, height / 5 * 4);
-	sw::interfaces::ISurface->DrawPrintText(velocityString.c_str(), velocityString.length());*/
+	float lastRainbow = lastVelocity / 250.f;
+	if (lastRainbow > 1.f) lastRainbow = 1.f;
+	iface::Color lastResult = util::MixColors(iface::Color(255, 180, 0), iface::Color(0, 255, 0), lastRainbow);
+
+	draw::DrawShadedText(draw::FontDefault, velocityString, width / 2 - textW / 2, height / 5 * 4, Result);
+	draw::DrawShadedText(draw::FontDefault, lastVelocityString, width / 2 - textW2 / 2, height / 5 * 4 + textH + 5, lastResult);
 	
 
 
