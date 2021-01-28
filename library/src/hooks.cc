@@ -8,6 +8,7 @@
 #include "hacks/chams.hh"
 #include "hacks/grief.hh"
 #include "hacks/visuals.hh"
+#include "hacks/predict.hh"
 #include "memory.hh"
 
 sw::vtable::VTableHook* sw::hooks::IBaseClientDLL = nullptr;
@@ -73,6 +74,9 @@ bool __stdcall cm_hook(float frametime, sw::iface::CUserCmd* pCmd)
     sw::hacks::misc::Bunnyhop(pCmd);
     sw::hacks::misc::RecoilControl(pCmd);
     //sw::hacks::grief::Blockbot(pCmd);
+
+    sw::hacks::predict::RunPrediction(pCmd);
+    sw::hacks::misc::JumpBug(pCmd);
 
     return false;
 }

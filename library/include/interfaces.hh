@@ -20,6 +20,8 @@
 #include "iface/IVModelRender.hh"
 #include "iface/IStudioRender.hh"
 #include "iface/IVDebugOverlay.hh"
+#include "iface/CPrediction.hh"
+#include "iface/IGameMovement.hh"
 
 namespace sw::interfaces
 {
@@ -42,7 +44,8 @@ namespace sw::interfaces
     extern iface::IVModelRender* IVModelRender;
     extern iface::IStudioRender* IStudioRender;
     extern iface::IVDebugOverlay* IVDebugOverlay;
-    extern 
+    extern iface::CPrediction* CPrediction;
+    extern iface::IGameMovement* IGameMovement;
 
     iface::IClientEntity* GetLocalPlayer();
 }

@@ -3,6 +3,8 @@
 #include <Windows.h>
 #include <string>
 #include "iface/IViewRenderBeams.hh"
+#include "iface/IMoveHelper.hh"
+#include "iface/CMoveData.hh"
 
 namespace sw::iface
 {
@@ -30,4 +32,8 @@ namespace sw::memory
     extern void (__thiscall* KeyValuesSetString)(iface::KeyValues* keyValues, const char* value);
 
     extern iface::IViewRenderBeams* IViewRenderBeams;
+    extern iface::IMoveHelper* IMoveHelper;
+
+    extern int* predictSeed;
+    extern iface::CMoveData* CMoveData;
 }

@@ -28,4 +28,6 @@ namespace sw::hacks::misc
 	void HitSound(iface::IGameEvent* event);
 
 	void NadePreview();
+
+	void JumpBug(iface::CUserCmd* cmd);
 }

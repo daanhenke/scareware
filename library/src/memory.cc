@@ -13,6 +13,9 @@ uintptr_t sw::memory::KeyValuesFromString;
 sw::iface::KeyValues* (__thiscall* sw::memory::KeyValuesFindKey)(sw::iface::KeyValues* keyValues, const char* keyName, bool create);
 void(__thiscall* sw::memory::KeyValuesSetString)(sw::iface::KeyValues* keyValues, const char* value);
 sw::iface::IViewRenderBeams* sw::memory::IViewRenderBeams = nullptr;
+sw::iface::IMoveHelper* sw::memory::IMoveHelper = nullptr;
+int* sw::memory::predictSeed = nullptr;
+sw::iface::CMoveData* sw::memory::CMoveData = nullptr;
 
 // Waits for a module to be loaded and returns a handle to it once it is
 DWORD sw::memory::WaitForModule(const char* module_name)
@@ -123,6 +126,10 @@ void sw::memory::FindRandomPtrs()
     KeyValuesSetString = ToAbsolute<decltype(KeyValuesSetString)>(FindPattern("client", "\xE8????\x89\x77\x38") + 1);
 
     IViewRenderBeams = *reinterpret_cast<iface::IViewRenderBeams**>(FindPattern("client", "\xB9????\x0F\x11\x44\x24?\xC7\x44\x24?????\xF3\x0F\x10\x84\x24") + 1);
+    IMoveHelper = **reinterpret_cast<iface::IMoveHelper***>(FindPattern("client", "\x8B\x0D????\x8B\x45?\x51\x8B\xD4\x89\x02\x8B\x01") + 2);
 
-    console::WriteFormat("kv ptrs: %x, %x, %x\n", KeyValuesFromString, KeyValuesFindKey, KeyValuesSetString);
+    predictSeed = *reinterpret_cast<int**>(FindPattern("client", "\x8B\x0D????\xBA????\xE8????\x83\xC4\x04") + 2);
+    CMoveData = **reinterpret_cast<iface::CMoveData***>(FindPattern("client", "\xA1????\xF3\x0F\x59\xCD") + 1);
+
+    console::WriteFormat("mover: %x\n", CMoveData);
 }

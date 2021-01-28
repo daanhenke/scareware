@@ -6,8 +6,7 @@
 #include "interfaces.hh"
 #include "iface/Color.hh"
 #include <Windows.h>
-#include <locale>
-#include <codecvt>
+#include "iface/CUserCmd.hh"
 
 #include <intrin.h>
 #pragma intrinsic(_ReturnAddress)
@@ -23,5 +22,5 @@ namespace sw::util
 
     iface::Color  MixColors(iface::Color a, iface::Color b, float mix);
 
-    extern std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> wstring_converter;
+    float GetServerTime(iface::CUserCmd* cmd);
 }

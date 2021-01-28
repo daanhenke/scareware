@@ -4,6 +4,7 @@
 #include "console.hh"
 #include "memory.hh"
 #include "util.hh"
+#include "hacks/predict.hh"
 
 void sw::hacks::misc::Bunnyhop(iface::CUserCmd* cmd)
 {
@@ -345,4 +346,16 @@ void sw::hacks::misc::HitSound(iface::IGameEvent* event)
     if (info.userId != attackerId) return;
 
     sw::interfaces::ISurface->PlaySound("buttons/arena_switch_press_02.wav");
+}
+
+void sw::hacks::misc::JumpBug(iface::CUserCmd* cmd)
+{
+    auto localPlayer = interfaces::GetLocalPlayer();
+    if (!localPlayer) return;
+
+    if (!(predict::OldFlags & 1) && (localPlayer->fFlags() & 1))
+    {
+        cmd->buttons |= iface::IN_DUCK;
+        cmd->buttons &= iface::IN_JUMP;
+    }
 }

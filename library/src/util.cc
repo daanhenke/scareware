@@ -91,4 +91,26 @@ sw::iface::Color sw::util::MixColors(iface::Color a, iface::Color b, float mix)
     return result;
 }
 
-std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> sw::util::wstring_converter;
+float sw::util::GetServerTime(iface::CUserCmd* cmd)
+{
+    static int tick;
+    static iface::CUserCmd* lastCmd;
+
+    static auto localPlayer = interfaces::GetLocalPlayer();
+
+    if (cmd != nullptr)
+    {
+        if (localPlayer && (!lastCmd || lastCmd->hasbeenpredicted))
+        {
+            tick = localPlayer->nTickBase();
+        }
+        else
+        {
+            tick++;
+        }
+
+        lastCmd = cmd;
+    }
+
+    return tick * interfaces::CGlobalVars->intervalPerTick;
+}

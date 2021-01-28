@@ -20,6 +20,7 @@ target_sources(scareware
         src/hacks/chams.cc
         src/hacks/grief.cc
         src/hacks/visuals.cc
+        src/hacks/predict.cc
         src/external/Yaml.cc
 )
 

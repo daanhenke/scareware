@@ -95,6 +95,7 @@ namespace sw::iface
         NETVAR(aimPunchAngle, "CBasePlayer", "m_aimPunchAngle", Vector);
         NETVAR(viewPunchAngle, "CBasePlayer", "m_viewPunchAngle", Vector);
         NETVAR(hViewModel, "CBasePlayer", "m_hViewModel[0]", int);
+        NETVAR(nTickBase, "CBasePlayer", "m_nTickBase", int);
 
         NETVAR(flFlashMaxAlpha, "CCSPlayer", "m_flFlashMaxAlpha", float);
         NETVAR(bIsScoped, "CCSPlayer", "m_bIsScoped", bool);
