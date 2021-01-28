@@ -355,7 +355,6 @@ void sw::hacks::misc::JumpBug(iface::CUserCmd* cmd)
 
     if (!(predict::OldFlags & 1) && (localPlayer->fFlags() & 1))
     {
-        cmd->buttons |= iface::IN_DUCK;
-        cmd->buttons &= iface::IN_JUMP;
+        cmd->buttons &= ~iface::IN_DUCK;
     }
 }

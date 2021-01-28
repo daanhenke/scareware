@@ -12,10 +12,11 @@ void sw::hacks::predict::RunPrediction(iface::CUserCmd* cmd)
 
 	OldFlags = localPlayer->fFlags();
 
+	*memory::predictSeed = 0;
+
 	auto oldCurrentTime = interfaces::CGlobalVars->currenttime;
 	auto oldFrametime = interfaces::CGlobalVars->frametime;
 
-	*memory::predictSeed = 0;
 	interfaces::CGlobalVars->currenttime = util::GetServerTime(cmd);
 	interfaces::CGlobalVars->frametime = interfaces::CGlobalVars->intervalPerTick;
 
