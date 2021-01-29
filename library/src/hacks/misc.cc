@@ -375,7 +375,7 @@ void sw::hacks::misc::LedgeJump(iface::CUserCmd* cmd)
 {
     auto localPlayer = interfaces::GetLocalPlayer();
     if (!localPlayer) return;
-    if (!interfaces::IInputSystem->IsButtonDown(iface::KEY_X))
+    if (!interfaces::IInputSystem->IsButtonDown(iface::KEY_X)) return;
 
     if (localPlayer->movetype() == iface::MoveType::LADDER) return;
 
