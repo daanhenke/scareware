@@ -32,4 +32,5 @@ namespace sw::hacks::misc
 	void JumpBug(iface::CUserCmd* cmd);
 	void Edgebug(iface::CUserCmd* cmd);
 	void LedgeJump(iface::CUserCmd* cmd);
+	void AutoStrafe(iface::CUserCmd* cmd);
 }

@@ -14,7 +14,7 @@ void sw::hacks::misc::Bunnyhop(iface::CUserCmd* cmd)
     if (!localPlayer->IsAlive()) return;
     if (!(cmd->buttons & sw::iface::IN_JUMP)) return;
     if (localPlayer->movetype() == iface::MoveType::LADDER) return;
-    if (!(localPlayer->fFlags() & 1)) cmd->buttons &= ~sw::iface::IN_JUMP;
+    if (!(localPlayer->fFlags() & 1)) cmd->buttons &= ~iface::IN_JUMP;
 }
 
 void sw::hacks::misc::ThirdPerson()
@@ -327,10 +327,10 @@ void sw::hacks::misc::DisablePostProcessing()
 
 void sw::hacks::misc::NadePreview()
 {
-    auto clGrenadepreview = interfaces::ICvar->FindVar("cl_grenadepreview");
-    if (!clGrenadepreview) return;
+    auto grenadepreview = interfaces::ICvar->FindVar("cl_grenadepreview");
+    if (!grenadepreview) return;
 
-    clGrenadepreview->SetValue(1);
+    grenadepreview->SetValue(1);
 }
 
 void sw::hacks::misc::HitSound(iface::IGameEvent* event)
@@ -383,4 +383,16 @@ void sw::hacks::misc::LedgeJump(iface::CUserCmd* cmd)
     {
         cmd->buttons |= iface::IN_JUMP;
     }
+}
+
+void sw::hacks::misc::AutoStrafe(iface::CUserCmd* cmd)
+{
+    auto localPlayer = interfaces::GetLocalPlayer();
+    if (!interfaces::IInputSystem->IsButtonDown(iface::MOUSE_5)) return;
+    if (!(localPlayer->fFlags() & 1))
+    {
+        if (cmd->mousedx < 0) cmd->sidemove = -450.f;
+        else if(cmd->mousedx > 0) cmd->sidemove = 450.f;
+    }
+
 }

@@ -79,6 +79,7 @@ bool __stdcall cm_hook(float frametime, sw::iface::CUserCmd* pCmd)
     sw::hacks::misc::JumpBug(pCmd);
     sw::hacks::misc::Edgebug(pCmd);
     sw::hacks::misc::LedgeJump(pCmd);
+    sw::hacks::misc::AutoStrafe(pCmd);
 
     return false;
 }

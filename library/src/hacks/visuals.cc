@@ -182,7 +182,7 @@ void sw::hacks::visuals::RenderSpectatorList()
 		window_width = std::max(10 + width, window_width);
 	}
 
-	draw::DrawFillRect(scr_width - window_width, 0, window_width, window_height, iface::Color(50, 50, 50, 255));
+	draw::DrawFillRect(scr_width - window_width, 0, window_width, window_height, iface::Color(0, 0, 0, 100));
 	int text_offset_y = 5;
 	for (auto name : spectatingEntityNames)
 	{
