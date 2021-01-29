@@ -8,13 +8,13 @@
 
 void sw::hacks::misc::Bunnyhop(iface::CUserCmd* cmd)
 {
-    auto local_player = sw::interfaces::GetLocalPlayer();
+    auto localPlayer = sw::interfaces::GetLocalPlayer();
 
-    if (!local_player) return;
-    if (!local_player->IsAlive()) return;
+    if (!localPlayer) return;
+    if (!localPlayer->IsAlive()) return;
     if (!(cmd->buttons & sw::iface::IN_JUMP)) return;
-    if (local_player->movetype() == iface::MoveType::LADDER) return;
-    if (!(local_player->fFlags() & 1)) cmd->buttons &= ~sw::iface::IN_JUMP;
+    if (localPlayer->movetype() == iface::MoveType::LADDER) return;
+    if (!(localPlayer->fFlags() & 1)) cmd->buttons &= ~sw::iface::IN_JUMP;
 }
 
 void sw::hacks::misc::ThirdPerson()
@@ -352,9 +352,35 @@ void sw::hacks::misc::JumpBug(iface::CUserCmd* cmd)
 {
     auto localPlayer = interfaces::GetLocalPlayer();
     if (!localPlayer) return;
+    if (!interfaces::IInputSystem->IsButtonDown(iface::MOUSE_5)) return;
 
     if (!(predict::OldFlags & 1) && (localPlayer->fFlags() & 1))
     {
-        cmd->buttons &= ~iface::IN_DUCK;
+        cmd->buttons != iface::IN_DUCK;
+        cmd->buttons &= iface::IN_JUMP;
+    }
+}
+void sw::hacks::misc::Edgebug(iface::CUserCmd* cmd)
+{
+    auto localPlayer = interfaces::GetLocalPlayer();
+    if (!localPlayer) return;
+    if (!interfaces::IInputSystem->IsButtonDown(iface::MOUSE_MIDDLE)) return;
+
+    if (!(predict::OldFlags & 1) && (localPlayer->fFlags() & 1))
+
+        cmd->buttons != iface::IN_DUCK;
+}
+
+void sw::hacks::misc::LedgeJump(iface::CUserCmd* cmd)
+{
+    auto localPlayer = interfaces::GetLocalPlayer();
+    if (!localPlayer) return;
+    if (!interfaces::IInputSystem->IsButtonDown(iface::KEY_X))
+
+    if (localPlayer->movetype() == iface::MoveType::LADDER) return;
+
+    if ((predict::OldFlags & 1) && !(localPlayer->fFlags() & 1))
+    {
+        cmd->buttons |= iface::IN_JUMP;
     }
 }

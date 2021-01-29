@@ -30,4 +30,6 @@ namespace sw::hacks::misc
 	void NadePreview();
 
 	void JumpBug(iface::CUserCmd* cmd);
+	void Edgebug(iface::CUserCmd* cmd);
+	void LedgeJump(iface::CUserCmd* cmd);
 }

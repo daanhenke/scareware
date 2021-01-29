@@ -26,7 +26,7 @@ void sw::hacks::predict::RunPrediction(iface::CUserCmd* cmd)
 	interfaces::CPrediction->FinishMove(localPlayer, cmd, memory::CMoveData);
 	memory::IMoveHelper->SetHost(nullptr);
 
-	*memory::predictSeed - 1;
+	*memory::predictSeed = -1;
 	interfaces::CGlobalVars->frametime = oldFrametime;
 	interfaces::CGlobalVars->currenttime = oldCurrentTime;
 }

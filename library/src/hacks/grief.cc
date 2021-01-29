@@ -6,10 +6,7 @@
 
 void sw::hacks::grief::Blockbot(iface::CUserCmd* cmd)
 {
-	if (!interfaces::IInputSystem->IsButtonDown(iface::MOUSE_4))
-	{
-		return;
-	}
+	if (!interfaces::IInputSystem->IsButtonDown(iface::MOUSE_4)) return;
 
 	auto localPlayer = interfaces::GetLocalPlayer();
 	if (!localPlayer) return;
