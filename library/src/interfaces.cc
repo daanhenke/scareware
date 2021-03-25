@@ -22,7 +22,8 @@ sw::iface::IVModelRender*       sw::interfaces::IVModelRender = nullptr;
 sw::iface::IStudioRender*       sw::interfaces::IStudioRender = nullptr;
 sw::iface::IVDebugOverlay*      sw::interfaces::IVDebugOverlay = nullptr;
 sw::iface::CPrediction*         sw::interfaces::CPrediction = nullptr;
-sw::iface::IGameMovement*       sw::interfaces::IGameMovement= nullptr;
+sw::iface::IGameMovement*       sw::interfaces::IGameMovement = nullptr;
+sw::iface::IEngineTrace*        sw::interfaces::IEngineTrace = nullptr;
 
 // Private map used for printing all the interface pointers
 std::map<std::string, uintptr_t> _iface_ptr_map;
@@ -91,7 +92,8 @@ bool sw::interfaces::FindInterfaces()
     IStudioRender = GetInterface<iface::IStudioRender>("VStudioRender", "studiorender");
     IVDebugOverlay = GetInterface<iface::IVDebugOverlay>("VDebugOverlay", "engine");
     CPrediction = GetInterface<iface::CPrediction>("VClientPrediction", "client");
-    IGameMovement = GetInterface<iface::IGameMovement>("GameMovement", "client");
+    IGameMovement = GetInterface<iface::IGameMovement>("GameMovement001", "client");
+    IEngineTrace = GetInterface<iface::IEngineTrace>("EngineTraceClient", "engine");
     
     // These interfaces don't have one, get them using magic instead
     ClientModeShared = **reinterpret_cast<iface::ClientModeShared ***>( ( *reinterpret_cast<uintptr_t **>( IBaseClientDLL ) )[ 10 ] + 0x5 );
