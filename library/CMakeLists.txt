@@ -22,6 +22,14 @@ target_sources(scareware
         src/hacks/visuals.cc
         src/hacks/predict.cc
         src/external/Yaml.cc
+        src/ui/lib.cc
+        src/ui/test.cc
 )
+
+if (MSVC)
+else()
+    target_compile_options(scareware PRIVATE "-fpermissive")
+endif()
+
 
 target_include_directories(scareware PUBLIC include)
