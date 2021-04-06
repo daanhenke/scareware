@@ -28,7 +28,7 @@ void sw::netvars::NetvarManager::WalkTable(const char* networkName, iface::RecvT
 		}
 
 		m_netvar_map[std::string(networkName) + "::" + std::string(prop.name)] = offset + prop.offset;
-		if (std::string(networkName) == "CBaseAnimating")
+		if (std::string(networkName) == "CBasePlayer")
 		{
 			console::WriteColorFormat(FOREGROUND_GREEN, "Found CBaseCombatCharacter prop: %s::%s: %x\n", networkName, prop.name, offset + prop.offset);
 		}
@@ -40,6 +40,11 @@ uint16_t sw::netvars::NetvarManager::GetOffset(std::string name)
 	if (m_netvar_map.contains(name))
 	{
 		//console::WriteColorFormat(FOREGROUND_RED, "Resolved netvar '%s': %x\n", name, m_netvar_map[name]);
+		//if (name.ends_with("Flags"))
+		//{
+		//	Sleep(100);
+		//	MessageBoxA(nullptr, "Resolved!", "Res", MB_OK);
+		//}
 		return m_netvar_map[name];
 	}
 

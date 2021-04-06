@@ -169,6 +169,10 @@ void sw::hacks::misc::RemoveRecoil(iface::FrameStage stage)
         aimPunch = localPlayer->aimPunchAngle();
         viewPunch = localPlayer->viewPunchAngle();
 
+
+        localPlayer->iFOV() = 160;
+        localPlayer->iFOVStart() = 160;
+
         localPlayer->aimPunchAngle() = iface::Vector{};
         localPlayer->viewPunchAngle() = iface::Vector{};
     }
@@ -258,7 +262,7 @@ void sw::hacks::misc::BulletTracers(iface::IGameEvent* event)
     if (beam)
     {
         beam->m_nFlags &= ~0x4000;
-        beam->m_flDie = interfaces::CGlobalVars->currenttime + 2.f;
+        beam->m_flDie = interfaces::CGlobalVars->currenttime + 5.f;
     }
 }
 
@@ -307,6 +311,7 @@ void sw::hacks::misc::RecoilControl(iface::CUserCmd* cmd)
         auto viewClamped = util::ClampAngle(viewAnglesNew);
         cmd->viewangles.x = viewClamped.x;
         cmd->viewangles.y = viewClamped.y;
+        cmd->viewangles.z = viewClamped.z;
 
         oldAngle = util::ClampAngle(newAngle);
     }
@@ -346,6 +351,8 @@ void sw::hacks::misc::HitSound(iface::IGameEvent* event)
     if (info.userId != attackerId) return;
 
     sw::interfaces::ISurface->PlaySound("buttons/arena_switch_press_02.wav");
+
+    auto hudchat = sw::interfaces::ClientModeShared->GetHudChat();
 }
 
 void sw::hacks::misc::JumpBug(iface::CUserCmd* cmd)
@@ -392,7 +399,41 @@ void sw::hacks::misc::AutoStrafe(iface::CUserCmd* cmd)
     if (!(localPlayer->fFlags() & 1))
     {
         if (cmd->mousedx < 0) cmd->sidemove = -450.f;
-        else if(cmd->mousedx > 0) cmd->sidemove = 450.f;
+        else if(cmd->mousedx > 0
+            ) cmd->sidemove = 450.f;
     }
 
+}
+
+void sw::hacks::misc::TriggerBot(iface::CUserCmd* cmd)
+{
+    auto localPlayer = interfaces::GetLocalPlayer();
+    if (!localPlayer) return;
+
+    if (!interfaces::IInputSystem->IsButtonDown(iface::KEY_H)) return;
+
+
+    console::WriteFormat("weapon getting!!!\n");
+
+    auto weapon = localPlayer->GetActiveWeapon();
+    if (!weapon) return;
+
+    auto weaponData = weapon->GetWeaponData();
+    if (!weaponData) return;
+
+    console::WriteFormat("tracing!!!\n");
+
+
+    auto startPos = localPlayer->GetEyePosition();
+    auto endPos = startPos + iface::Vector::FromAngle(cmd->viewangles + (localPlayer->aimPunchAngle())) * weaponData->range;
+
+    iface::Ray ray(startPos, endPos);
+
+    iface::Trace trace;
+    iface::TraceFilter filter(localPlayer);
+    interfaces::IEngineTrace->TraceRay(ray, 0x46004009, filter, trace);/*
+
+    if (!trace.entity) return;
+    console::WriteFormat("triggerbot working!!!\n");
+    cmd->buttons |= iface::IN_ATTACK;*/
 }

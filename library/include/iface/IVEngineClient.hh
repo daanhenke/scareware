@@ -4,6 +4,8 @@
 #include "iface/VMatrix.hh"
 #include "iface/PlayerInfo.hh"
 
+#include <functional>
+
 namespace sw::iface
 {
     class IVEngineClient

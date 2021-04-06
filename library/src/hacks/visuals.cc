@@ -47,6 +47,14 @@ struct EntityBB
 	}
 };
 
+#include "iface/WeaponId.hh"
+using namespace sw;
+std::map<iface::WeaponId, char> weapon_icons =
+{
+	{ iface::WeaponId::Awp, 'Z' },
+	{ iface::WeaponId::Ak47, 'W' }
+};
+
 void sw::hacks::visuals::RenderPlayer(sw::iface::IClientEntity* entity)
 {
 	// Show on minimap
@@ -73,9 +81,22 @@ void sw::hacks::visuals::RenderPlayer(sw::iface::IClientEntity* entity)
 	interfaces::ISurface->DrawSetTextPos(bb.min.x, bb.min.y - 20);
 	interfaces::ISurface->DrawPrintText(nameBuffer, wcslen(nameBuffer));
 
-	interfaces::ISurface->DrawSetTextPos(bb.min.x, bb.min.y - 40);
-	interfaces::ISurface->DrawSetTextFont(draw::FontCSGOIcons);
-	interfaces::ISurface->DrawPrintText(L"\x52", 1);
+	auto weapon = entity->GetActiveWeapon();
+	if (!weapon) return;
+
+	auto weaponId = weapon->iItemDefinitionIndex2();
+
+	if (weapon_icons.contains(weaponId))
+	{
+		interfaces::ISurface->DrawSetTextPos(bb.min.x, bb.min.y - 40);
+		interfaces::ISurface->DrawSetTextFont(draw::FontCSGOIcons);
+
+		wchar_t string[2];
+		string[0] = weapon_icons[weaponId];
+		string[1] = '\0';
+		interfaces::ISurface->DrawPrintText(string, 1);
+	}
+	
 
 	//interfaces::ISurface->DrawSetColor(255, 0, 0, 255);
 	//interfaces::ISurface->DrawFilledRect(bb.min.x, bb.min.y, bb.max.x, bb.max.y);
@@ -103,7 +124,6 @@ void sw::hacks::visuals::RenderVelocity()
 	int textW2, textH2;
 	sw::interfaces::ISurface->GetTextSize(draw::FontDefault, velocityString.c_str(), &textW, &textH);
 	sw::interfaces::ISurface->GetTextSize(draw::FontDefault, lastVelocityString.c_str(), &textW2, &textH2);
-
 
 	int width, height;
 	sw::interfaces::IVEngineClient->GetScreenSize(width, height);
@@ -139,8 +159,8 @@ void sw::hacks::visuals::Render()
 			RenderPlayer(entity);
 		}
 
-		BYTE* fastRenderPath = reinterpret_cast<BYTE*>(entity->flFrozen()) + 4;
-		fastRenderPath = 0;
+		/*BYTE* fastRenderPath = reinterpret_cast<BYTE*>(entity->flFrozen()) + 4;
+		fastRenderPath = 0;*/
 	}
 
 	RenderVelocity();

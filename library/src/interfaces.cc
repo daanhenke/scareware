@@ -93,7 +93,7 @@ bool sw::interfaces::FindInterfaces()
     IVDebugOverlay = GetInterface<iface::IVDebugOverlay>("VDebugOverlay", "engine");
     CPrediction = GetInterface<iface::CPrediction>("VClientPrediction", "client");
     IGameMovement = GetInterface<iface::IGameMovement>("GameMovement001", "client");
-    IEngineTrace = GetInterface<iface::IEngineTrace>("EngineTraceClient", "engine");
+    IEngineTrace = GetInterface<iface::IEngineTrace>("EngineTraceClient004", "engine");
     
     // These interfaces don't have one, get them using magic instead
     ClientModeShared = **reinterpret_cast<iface::ClientModeShared ***>( ( *reinterpret_cast<uintptr_t **>( IBaseClientDLL ) )[ 10 ] + 0x5 );

@@ -9,6 +9,9 @@
 #include "iface/WeaponId.hh"
 #include "iface/ClientClass.hh"
 #include "iface/ICollideable.hh"
+#include "iface/WeaponInfo.hh"
+
+#include <functional>
 
 namespace sw::iface
 {
@@ -65,6 +68,13 @@ namespace sw::iface
             return CALL_MEMBER_GETTER(IsAlive_t, this + sizeof(uintptr_t) * 2, 2);
         }
 
+        Vector GetEyePosition()
+        {
+            Vector outp;
+            iface::CallVirtualFunction<void, 284, Vector*>(this, &outp);
+            return outp;
+        }
+
         LAZY_MEMBER(GetCollideable, ICollideable*, (), 3, (this));
 
         LAZY_MEMBER(ShouldDraw, bool, (), 3, (this + sizeof(uintptr_t)));
@@ -82,6 +92,7 @@ namespace sw::iface
 
         LAZY_MEMBER(GetActiveWeapon, IClientEntity*, (), 267, (this));
         LAZY_MEMBER(GetWeaponType, WeaponType, (), 454, (this));
+        LAZY_MEMBER(GetWeaponData, WeaponInfo*, (), 460, (this));
         LAZY_MEMBER(GetMuzzleAttachment1stPerson, int, (IClientEntity* viewModel), 467, (this, viewModel));
         LAZY_MEMBER(GetMuzzleAttachment3rdPerson, int, (), 468, (this));
 
@@ -96,6 +107,8 @@ namespace sw::iface
         NETVAR(viewPunchAngle, "CBasePlayer", "m_viewPunchAngle", Vector);
         NETVAR(hViewModel, "CBasePlayer", "m_hViewModel[0]", int);
         NETVAR(nTickBase, "CBasePlayer", "m_nTickBase", int);
+        NETVAR(iFOV, "CBasePlayer", "m_iFOV", int);
+        NETVAR(iFOVStart, "CBasePlayer", "m_iFOVStart", int);
 
         NETVAR(flFlashMaxAlpha, "CCSPlayer", "m_flFlashMaxAlpha", float);
         NETVAR(bIsScoped, "CCSPlayer", "m_bIsScoped", bool);

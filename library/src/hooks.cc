@@ -9,7 +9,10 @@
 #include "hacks/grief.hh"
 #include "hacks/visuals.hh"
 #include "hacks/predict.hh"
+#include "hacks/chat.hh"
 #include "memory.hh"
+
+#include <cstring>
 
 sw::vtable::VTableHook* sw::hooks::IBaseClientDLL = nullptr;
 sw::vtable::VTableHook* sw::hooks::IPanel = nullptr;
@@ -23,6 +26,9 @@ sw::hooks::DrawModelExecuteFn sw::hooks::oDrawModelExecute = nullptr;
 sw::hooks::PaintTraverseFn oPaintTraverse;
 void __fastcall pt_hook(void* pPanels, int edx, unsigned int vguiPanel, bool forceRepaint, bool allowForce)
 {
+    // Call the original function
+    oPaintTraverse(pPanels, vguiPanel, forceRepaint, allowForce);
+
     // We want to cache the panel ID of the panel we want to render to
     static unsigned int uiPanelId = 0;
     static bool shouldDrawUi = false;
@@ -33,14 +39,11 @@ void __fastcall pt_hook(void* pPanels, int edx, unsigned int vguiPanel, bool for
     // If the panel ID isn't found already try to find it
     if (uiPanelId == 0)
     {
-        if (strstr(sw::interfaces::IPanel->GetName(vguiPanel), "MatSystemTopPanel"))
+        if (strstr(sw::interfaces::IPanel->GetName(vguiPanel), "MatSystemTop"))
         {
             uiPanelId = vguiPanel;
         }
     }
-    
-    // Call the original function
-    oPaintTraverse(pPanels, vguiPanel, forceRepaint, allowForce);
 
     if (uiPanelId == 0 || uiPanelId != vguiPanel)
     {
@@ -60,7 +63,6 @@ void __fastcall pt_hook(void* pPanels, int edx, unsigned int vguiPanel, bool for
     {
         sw::hacks::misc::NoscopeCrosshair();
         sw::hacks::visuals::Render();
-
     }
 }
 
@@ -75,11 +77,12 @@ bool __stdcall cm_hook(float frametime, sw::iface::CUserCmd* pCmd)
     sw::hacks::misc::RecoilControl(pCmd);
     //sw::hacks::grief::Blockbot(pCmd);
 
-    sw::hacks::predict::RunPrediction(pCmd);
-    sw::hacks::misc::JumpBug(pCmd);
-    sw::hacks::misc::Edgebug(pCmd);
-    sw::hacks::misc::LedgeJump(pCmd);
-    sw::hacks::misc::AutoStrafe(pCmd);
+    //sw::hacks::predict::RunPrediction(pCmd);
+    //sw::hacks::misc::JumpBug(pCmd);
+    //sw::hacks::misc::Edgebug(pCmd);
+    //sw::hacks::misc::LedgeJump(pCmd);
+    //sw::hacks::misc::AutoStrafe(pCmd);
+    //sw::hacks::misc::TriggerBot(pCmd);
 
     return false;
 }
@@ -137,6 +140,16 @@ bool __fastcall fecs_hook(void* _this, int edx, sw::iface::IGameEvent* event)
     else if (!std::strcmp(eventName, "player_hurt"))
     {
         sw::hacks::misc::HitSound(event);
+    }
+
+    else if (!std::strcmp(eventName, "start_vote") || !std::strcmp(eventName, "vote_started"))
+    {
+        sw::hacks::chat::LogVoteStart(event);
+    }
+
+    else if (!std::strcmp(eventName, "vote_cast"))
+    {
+        sw::hacks::chat::LogVoteCast(event);
     }
 
     return oFireEventsClientSide(_this, edx, event);

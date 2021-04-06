@@ -53,6 +53,8 @@ namespace sw::iface
             CALL_MEMBER(DrawFilledRect_t, this, 16, x1, y1, x2, y2);
         }
 
+        LAZY_MEMBER(DrawOutlinedRect, void, (int x1, int y1, int x2, int y2), 18, (this, x1, y1, x2, y2))
+
         void DrawSetTextFont(HFont font)
         {
             DEFINE_MEMBER(__thiscall* DrawSetTextFont_t, void, HFont);

@@ -27,7 +27,7 @@ namespace sw::iface
         void* vmt;
         int command_number;
         int tick_count;
-        QAngle viewangles;
+        Vector viewangles;
         Vector aimdirection;
         float forwardmove;
         float sidemove;

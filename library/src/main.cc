@@ -1,5 +1,6 @@
 #include <Windows.h>
 #include "logic.hh"
+#include <stdint.h>
 
 
 BOOL WINAPI DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpBaseAddress)

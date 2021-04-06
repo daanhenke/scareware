@@ -3,8 +3,16 @@
 #include "iface/basetypes.hh"
 #include <math.h>
 #include "iface/VMatrix.hh"
+#include "iface/QAngle.hh"
+#include <cmath>
 
 #define M_PI 3.14159265358979323846
+
+#include <numbers>
+constexpr float DegreesToRadians(float degrees)
+{
+    return degrees * std::numbers::pi_v<float> / 180.f;
+}
 
 namespace sw::iface
 {
@@ -27,7 +35,7 @@ namespace sw::iface
             return sqrt(sqrtVal);
         }
 
-        inline Vector operator+(Vector& rhs)
+        inline Vector operator+(Vector rhs)
         {
             return Vector(x + rhs.x, y + rhs.y, z + rhs.z);
         }
@@ -65,6 +73,15 @@ namespace sw::iface
                 DotProduct(Vector(matrix.m[0][0], matrix.m[0][1], matrix.m[0][2])) + matrix.m[0][3],
                 DotProduct(Vector(matrix.m[1][0], matrix.m[1][1], matrix.m[1][2])) + matrix.m[1][3],
                 DotProduct(Vector(matrix.m[2][0], matrix.m[2][1], matrix.m[2][2])) + matrix.m[2][3]
+            );
+        }
+
+        static auto FromAngle(Vector angle)
+        {
+            return Vector(
+                std::cos(DegreesToRadians(angle.x)) * std::cos(DegreesToRadians(angle.y)),
+                std::cos(DegreesToRadians(angle.x)) * std::sin(DegreesToRadians(angle.y)),
+                -std::sin(DegreesToRadians(angle.x))
             );
         }
     };

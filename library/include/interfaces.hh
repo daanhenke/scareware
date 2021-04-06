@@ -22,6 +22,7 @@
 #include "iface/IVDebugOverlay.hh"
 #include "iface/CPrediction.hh"
 #include "iface/IGameMovement.hh"
+#include "iface/IEngineTrace.hh"
 
 namespace sw::interfaces
 {
@@ -46,6 +47,7 @@ namespace sw::interfaces
     extern iface::IVDebugOverlay* IVDebugOverlay;
     extern iface::CPrediction* CPrediction;
     extern iface::IGameMovement* IGameMovement;
+    extern iface::IEngineTrace* IEngineTrace;
 
     iface::IClientEntity* GetLocalPlayer();
 }
