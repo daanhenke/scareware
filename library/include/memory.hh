@@ -5,6 +5,7 @@
 #include "iface/IViewRenderBeams.hh"
 #include "iface/IMoveHelper.hh"
 #include "iface/CMoveData.hh"
+#include <d3d9.h>
 
 namespace sw::iface
 {
@@ -36,4 +37,6 @@ namespace sw::memory
 
     extern int* predictSeed;
     extern iface::CMoveData* CMoveData;
+
+    extern IDirect3DDevice9* D3DDevice;
 }

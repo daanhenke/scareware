@@ -23,9 +23,8 @@ target_sources(scareware
         src/hacks/predict.cc
         src/hacks/chat.cc
         src/external/Yaml.cc
-        src/ui/lib.cc
-        src/ui/test.cc
-)
+        src/ui/render.cc
+ "include/ui/nuklear_d3d9.h")
 
 if (MSVC)
 else()

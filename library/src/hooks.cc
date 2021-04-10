@@ -11,6 +11,7 @@
 #include "hacks/predict.hh"
 #include "hacks/chat.hh"
 #include "memory.hh"
+#include "ui/render.hh"
 
 #include <cstring>
 
@@ -20,6 +21,7 @@ sw::vtable::VTableHook* sw::hooks::ClientModeShared = nullptr;
 sw::vtable::VTableHook* sw::hooks::IVModelRender = nullptr;
 sw::vtable::VTableHook* sw::hooks::SvCheats = nullptr;
 sw::vtable::VTableHook* sw::hooks::IGameEventManager2 = nullptr;
+sw::vtable::VTableHook* sw::hooks::IDirect3DDevice9 = nullptr;
 
 sw::hooks::DrawModelExecuteFn sw::hooks::oDrawModelExecute = nullptr;
 
@@ -102,6 +104,7 @@ void __fastcall fsn_hook(void* _this, int edx, sw::iface::FrameStage stage)
             sw::hacks::misc::Remove3dSky();
             sw::hacks::misc::DisablePostProcessing();
             sw::hacks::misc::NadePreview();
+            sw::hacks::misc::ChangeFOV();
         }
         else if (stage == sw::iface::FrameStage::RENDER_START)
         {
@@ -171,6 +174,61 @@ void __fastcall dme_hook(void* _this, int edx, void* ctx, void* state, sw::iface
     sw::interfaces::IStudioRender->ForcedMaterialOverride(nullptr);
 }
 
+sw::hooks::EndSceneFn oEndScene;
+long __stdcall es_hook(IDirect3DDevice9* device)
+{
+    static uintptr_t gameoverlay_return = 0;
+    static bool nuklear_initialized = false;
+    void* current_return = _ReturnAddress();
+    static RECT window_rect;
+
+    // We only want to run if we got called from gameoverlay, get it's return address and compare it with ours
+    if (gameoverlay_return == 0)
+    {
+        MEMORY_BASIC_INFORMATION32 info;
+        VirtualQuery(current_return, (MEMORY_BASIC_INFORMATION*)&info, sizeof(info));
+
+        char mod_name[MAX_PATH];
+        GetModuleFileNameA((HMODULE)info.AllocationBase, mod_name, sizeof(mod_name));
+
+        if (strstr(mod_name, "gameoverlay"))
+        {
+            gameoverlay_return = (uintptr_t)current_return;
+            sw::console::WriteFormat("Found gameoverlay ret addr: %x\n", gameoverlay_return);
+        }
+    }
+
+    if (gameoverlay_return != (uintptr_t)current_return)
+    {
+        return oEndScene(device);
+    }
+
+    // We are now certain we're rendering to the screen, render ui & shit
+    
+    // Set up nuklear & wndproc hook if they haven't been set yet
+    if (!nuklear_initialized)
+    {
+        sw::ui::render::Initialize(device);
+        nuklear_initialized = true;
+    }
+    else
+    {
+        sw::ui::render::Render();
+    }
+
+    return oEndScene(device);
+}
+
+sw::hooks::ResetFn oReset;
+long __stdcall rs_hook(IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* params)
+{
+    auto result = oReset(device, params);
+
+    sw::ui::render::Reset(device, result);
+
+    return result;
+}
+
 class DummyEventListener : public sw::iface::IGameEventListener2
 {
     ~DummyEventListener() {}
@@ -178,6 +236,8 @@ class DummyEventListener : public sw::iface::IGameEventListener2
     {
     }
 };
+
+
 
 DummyEventListener* m_dummy_event_listener = nullptr;
 void sw::hooks::HookAll()
@@ -188,6 +248,7 @@ void sw::hooks::HookAll()
     SvCheats = new vtable::VTableHook((DWORD*)interfaces::ICvar->FindVar("sv_cheats"));
     IGameEventManager2 = new vtable::VTableHook((DWORD*) interfaces::IGameEventManager2);
     IVModelRender = new vtable::VTableHook((DWORD*)interfaces::IVModelRender);
+    IDirect3DDevice9 = new vtable::VTableHook((DWORD*)memory::D3DDevice);
 
     oPaintTraverse = (PaintTraverseFn) IPanel->HookMethod((DWORD) &pt_hook, 41);
 
@@ -201,6 +262,9 @@ void sw::hooks::HookAll()
 
     oDrawModelExecute = (DrawModelExecuteFn)IVModelRender->HookMethod((DWORD)&dme_hook, 21);
 
+    oEndScene = (EndSceneFn)IDirect3DDevice9->HookMethod((DWORD)&es_hook, 42);
+    oReset = (ResetFn)IDirect3DDevice9->HookMethod((DWORD)&rs_hook, 16);
+
     m_dummy_event_listener = new DummyEventListener();
     interfaces::IGameEventManager2->AddListener(m_dummy_event_listener, "bullet_impact", false);
 }
@@ -213,6 +277,17 @@ void sw::hooks::UnhookAll()
     SvCheats->RestoreOld();
     IGameEventManager2->RestoreOld();
     IVModelRender->RestoreOld();
+    IDirect3DDevice9->RestoreOld();
 
     interfaces::IGameEventManager2->RemoveListener(m_dummy_event_listener);
+
+    if (ui::render::oWndProc != 0)
+    {
+        console::WriteFormat("wndproc: %x\n", ui::render::oWndProc);
+        D3DDEVICE_CREATION_PARAMETERS params;
+        memory::D3DDevice->GetCreationParameters(&params);
+        SetWindowLongPtrA(params.hFocusWindow, GWL_WNDPROC, (LONG) ui::render::oWndProc);
+
+        ui::render::Reset(memory::D3DDevice, 0);
+    }
 }

@@ -72,34 +72,96 @@ void sw::hacks::visuals::RenderPlayer(sw::iface::IClientEntity* entity)
 
 	interfaces::IVEngineClient->GetPlayerInfo(entity->Index(), playerInfo);
 
+	std::string playerNameStr(playerInfo.name);
+	std::wstring playerNameWideStr(playerNameStr.begin(), playerNameStr.end());
 
-	interfaces::ISurface->DrawSetTextFont(draw::FontDefault);
-	interfaces::ISurface->DrawSetTextColor(255, 255, 255, 255);
+	playerNameWideStr += L"\t(" + std::to_wstring(entity->Health()) + L" HP";
 
-	wchar_t nameBuffer[128];
-	MultiByteToWideChar(CP_UTF8, 0, playerInfo.name, 128, nameBuffer, 128);
-	interfaces::ISurface->DrawSetTextPos(bb.min.x, bb.min.y - 20);
-	interfaces::ISurface->DrawPrintText(nameBuffer, wcslen(nameBuffer));
+	auto armor = entity->ArmorValue();
+	if (armor != 0)
+	{
+		playerNameWideStr += L", " + std::to_wstring(armor) + L" AR";
+	}
+
+	if (entity->bHasHelmet())
+	{
+		playerNameWideStr += L", H";
+	}
+
+	if (entity->bHasDefuser())
+	{
+		playerNameWideStr += L", DF";
+	}
+
+	playerNameWideStr += L")";
+
+	draw::DrawText(draw::FontDefault, playerNameWideStr, bb.min.x, bb.min.y - 20);
 
 	auto weapon = entity->GetActiveWeapon();
 	if (!weapon) return;
 
-	auto weaponId = weapon->iItemDefinitionIndex2();
+	auto weaponData = weapon->GetWeaponData();
+	if (!weaponData || !weaponData->name) return;
+	std::string weaponNameStr(weaponData->name);
+	std::wstring weaponNameWideStr(weaponNameStr.begin(), weaponNameStr.end());
+	std::wstring weaponChunk = weaponNameWideStr.substr(weaponNameWideStr.rfind(L'_') + 1);
 
-	if (weapon_icons.contains(weaponId))
+	auto clip = weapon->iClip1();
+	if (clip != -1)
 	{
-		interfaces::ISurface->DrawSetTextPos(bb.min.x, bb.min.y - 40);
-		interfaces::ISurface->DrawSetTextFont(draw::FontCSGOIcons);
+		weaponChunk += L" (" + std::to_wstring(clip) + L" / " + std::to_wstring(weaponData->maxClip) + L")";
+	}
 
-		wchar_t string[2];
-		string[0] = weapon_icons[weaponId];
-		string[1] = '\0';
-		interfaces::ISurface->DrawPrintText(string, 1);
+	draw::DrawText(draw::FontDefault, weaponChunk, bb.min.x, bb.min.y - 10);
+
+	std::wstring specialStr = L"";
+	bool renderSpecial = true;
+
+	if (entity->bIsDefusing())
+	{
+		specialStr += L" * defusing *";
+	}
+	else if (entity->bIsScoped())
+	{
+		specialStr += L"* scoped *";
+	}
+	else if (weapon != nullptr && weapon->IsReloading())
+	{
+		specialStr += L"* reloading *";
+	}
+	else
+	{
+		renderSpecial = false;
+	}
+
+	if (renderSpecial)
+	{
+		draw::DrawText(draw::FontDefault, specialStr, bb.min.x, bb.min.y - 30);
 	}
 	
 
 	//interfaces::ISurface->DrawSetColor(255, 0, 0, 255);
 	//interfaces::ISurface->DrawFilledRect(bb.min.x, bb.min.y, bb.max.x, bb.max.y);
+}
+
+void sw::hacks::visuals::RenderWeapon(sw::iface::IClientEntity* entity)
+{
+	auto bb = EntityBB(entity);
+
+	if (!bb.isValid) return;
+
+	auto weaponData = entity->GetWeaponData();
+	std::string weaponNameStr(weaponData->name);
+	std::wstring weaponNameWideStr(weaponNameStr.begin(), weaponNameStr.end());
+	std::wstring weaponChunk = weaponNameWideStr.substr(weaponNameWideStr.rfind(L'_') + 1);
+
+	draw::DrawText(draw::FontDefault, weaponChunk, bb.min.x, bb.min.y);
+
+	auto clip = entity->iClip1();
+	if (clip == -1) return;
+
+	std::wstring ammoStr = std::to_wstring(clip) + L" / " + std::to_wstring(weaponData->maxClip);
+	draw::DrawText(draw::FontDefault, ammoStr, bb.min.x, bb.min.y + 10);
 }
 
 void sw::hacks::visuals::RenderVelocity()
@@ -131,8 +193,8 @@ void sw::hacks::visuals::RenderVelocity()
 	iface::Color Result = util::MixColors(iface::Color(255, 180, 0), iface::Color(0, 255, 0), std::min(1.f, velocity / 250.f));
 	iface::Color lastResult = util::MixColors(iface::Color(255, 180, 0), iface::Color(0, 255, 0), std::min(1.f, lastVelocity /250.f));
 
-	draw::DrawShadedText(draw::FontDefault, velocityString, width / 2 - textW / 2, height / 5 * 4, Result);
-	draw::DrawShadedText(draw::FontDefault, lastVelocityString, width / 2 - textW2 / 2, height / 5 * 4 + textH + 5, lastResult);
+	draw::DrawText(draw::FontDefault, velocityString, width / 2 - textW / 2, height / 5 * 4, Result);
+	draw::DrawText(draw::FontDefault, lastVelocityString, width / 2 - textW2 / 2, height / 5 * 4 + textH + 5, lastResult);
 
 	auto weapon = localPlayer->GetActiveWeapon();
 	if (!weapon) return;
@@ -151,12 +213,16 @@ void sw::hacks::visuals::Render()
 		auto entity = interfaces::IClientEntityList->GetClientEntity(i);
 
 		if (!entity) continue;
-		if (localPlayer == entity) continue;
+		//if (localPlayer == entity) continue;
 		if (entity->IsDormant() || !entity->IsAlive()) continue;
 
 		if (entity->IsPlayer())
 		{
 			RenderPlayer(entity);
+		}
+		else if (entity->IsWeapon() && entity->hOwnerEntity() == -1)
+		{
+			RenderWeapon(entity);
 		}
 
 		/*BYTE* fastRenderPath = reinterpret_cast<BYTE*>(entity->flFrozen()) + 4;

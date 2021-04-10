@@ -75,6 +75,11 @@ namespace sw::iface
             return outp;
         }
 
+        bool IsReloading()
+        {
+            return *reinterpret_cast<bool*>(uintptr_t(&iClip1()) + 0x41);
+        }
+
         LAZY_MEMBER(GetCollideable, ICollideable*, (), 3, (this));
 
         LAZY_MEMBER(ShouldDraw, bool, (), 3, (this + sizeof(uintptr_t)));
@@ -84,6 +89,7 @@ namespace sw::iface
 
         LAZY_MEMBER(GetAttachment, bool, (int index, Vector& origin), 83, (this, index, std::ref(origin)));
 
+        LAZY_MEMBER(Health, int, (), 121, (this));
         LAZY_MEMBER(IsPlayer, bool, (), 157, (this));
         LAZY_MEMBER(IsWeapon, bool, (), 165, (this));
 
@@ -99,6 +105,7 @@ namespace sw::iface
         NETVAR_OFFSET(movetype, "CBaseEntity", "m_nRenderMode", 1, MoveType);
         NETVAR(vecOrigin, "CBaseEntity", "m_vecOrigin", Vector);
         NETVAR(bSpotted, "CBaseEntity", "m_bSpotted", bool);
+        NETVAR(hOwnerEntity, "CBaseEntity", "m_hOwnerEntity", int);
         NETVAR(fFlags, "CBasePlayer", "m_fFlags", int);
         NETVAR(vecVelocity, "CBasePlayer", "m_vecVelocity[0]", Vector);
         NETVAR(hMyWeapons, "CBaseCombatCharacter", "m_hMyWeapons", int[64]);
@@ -110,8 +117,12 @@ namespace sw::iface
         NETVAR(iFOV, "CBasePlayer", "m_iFOV", int);
         NETVAR(iFOVStart, "CBasePlayer", "m_iFOVStart", int);
 
+        NETVAR(ArmorValue, "CCSPlayer", "m_ArmorValue", int);
         NETVAR(flFlashMaxAlpha, "CCSPlayer", "m_flFlashMaxAlpha", float);
         NETVAR(bIsScoped, "CCSPlayer", "m_bIsScoped", bool);
+        NETVAR(bIsDefusing, "CCSPlayer", "m_bIsDefusing", bool);
+        NETVAR(bHasHelmet, "CCSPlayer", "m_bHasHelmet", bool);
+        NETVAR(bHasDefuser, "CCSPlayer", "m_bHasDefuser", bool);
         NETVAR(angEyeAngles, "CCSPlayer", "m_angEyeAngles", Vector);
 
         NETVAR(iItemDefinitionIndex, "CBaseAttributableItem", "m_iItemDefinitionIndex", short);
@@ -126,6 +137,7 @@ namespace sw::iface
         NETVAR(iAccountID, "CBaseAttributableItem", "m_iAccountID", int);
 
         NETVAR(hWeaponWorldModel, "CBaseCombatWeapon", "m_hWeaponWorldModel", int);
+        NETVAR(iClip1, "CBaseCombatWeapon", "m_iClip1", int);
 
         PNETVAR(flFrozen, "CBaseAnimating", "m_flFrozen", float);
     };

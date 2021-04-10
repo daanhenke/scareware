@@ -169,10 +169,6 @@ void sw::hacks::misc::RemoveRecoil(iface::FrameStage stage)
         aimPunch = localPlayer->aimPunchAngle();
         viewPunch = localPlayer->viewPunchAngle();
 
-
-        localPlayer->iFOV() = 160;
-        localPlayer->iFOVStart() = 160;
-
         localPlayer->aimPunchAngle() = iface::Vector{};
         localPlayer->viewPunchAngle() = iface::Vector{};
     }
@@ -181,6 +177,24 @@ void sw::hacks::misc::RemoveRecoil(iface::FrameStage stage)
         localPlayer->aimPunchAngle() = aimPunch;
         localPlayer->viewPunchAngle() = viewPunch;
     }
+}
+
+void sw::hacks::misc::ChangeFOV()
+{
+    auto localPlayer = interfaces::GetLocalPlayer();
+    if (!localPlayer) return;
+
+    if (localPlayer->bIsScoped())
+    {
+        localPlayer->iFOV() = 10;
+        localPlayer->iFOVStart() = 10;
+    }
+    else
+    {
+        localPlayer->iFOV() = 115;
+        localPlayer->iFOVStart() = 115;
+    }
+
 }
 
 void sw::hacks::misc::MemeRagdolls()

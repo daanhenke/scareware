@@ -16,6 +16,7 @@ sw::iface::IViewRenderBeams* sw::memory::IViewRenderBeams = nullptr;
 sw::iface::IMoveHelper* sw::memory::IMoveHelper = nullptr;
 int* sw::memory::predictSeed = nullptr;
 sw::iface::CMoveData* sw::memory::CMoveData = nullptr;
+IDirect3DDevice9* sw::memory::D3DDevice;
 
 // Waits for a module to be loaded and returns a handle to it once it is
 DWORD sw::memory::WaitForModule(const char* module_name)
@@ -131,5 +132,7 @@ void sw::memory::FindRandomPtrs()
     predictSeed = *reinterpret_cast<int**>(FindPattern("client", "\x8B\x0D????\xBA????\xE8????\x83\xC4\x04") + 2);
     CMoveData = **reinterpret_cast<iface::CMoveData***>(FindPattern("client", "\xA1????\xF3\x0F\x59\xCD") + 1);
 
-    console::WriteFormat("mover: %x\n", CMoveData);
+    D3DDevice = **reinterpret_cast<IDirect3DDevice9***>(FindPattern("shaderapidx9", "\xa1????\x50\x8b\x08\xff\x51\x0c") + 1);
+
+    console::WriteFormat("d3d: %x\n", D3DDevice);
 }

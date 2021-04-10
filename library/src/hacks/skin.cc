@@ -29,6 +29,8 @@ void sw::hacks::skin::FrameStageNotify()
 
 		auto& weaponId = weapon->iItemDefinitionIndex2();
 
+		if (weaponId == iface::WeaponId::C4) return;
+
 		strcpy(weapon->szCustomName(), "VaporWare xDDDDD - daan");
 		weapon->iItemIDHigh() = -1;
 		weapon->flFallbackWear() = 0.0;

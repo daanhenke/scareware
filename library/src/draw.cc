@@ -6,7 +6,7 @@ sw::iface::HFont sw::draw::FontCSGOIcons = 0xa1; // Hardcoded, not initialized b
 
 void sw::draw::InitializeFonts()
 {
-	FontDefault = MakeFont("Arial", 25, 850, 0, 0, sw::iface::EFontFlags::FONTFLAG_ANTIALIAS);
+	FontDefault = MakeFont("Tahoma", 12, 300, 0, 0, iface::EFontFlags::FONTFLAG_OUTLINE);
 }
 
 void sw::draw::Initialize()

@@ -35,4 +35,5 @@ namespace sw::hacks::misc
 	void AutoStrafe(iface::CUserCmd* cmd);
 
 	void TriggerBot(iface::CUserCmd* cmd);
+	void ChangeFOV();
 }

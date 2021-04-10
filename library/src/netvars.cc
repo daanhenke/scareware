@@ -28,10 +28,10 @@ void sw::netvars::NetvarManager::WalkTable(const char* networkName, iface::RecvT
 		}
 
 		m_netvar_map[std::string(networkName) + "::" + std::string(prop.name)] = offset + prop.offset;
-		if (std::string(networkName) == "CBasePlayer")
+		/*if (std::string(networkName) == "CBasePlayer")
 		{
 			console::WriteColorFormat(FOREGROUND_GREEN, "Found CBaseCombatCharacter prop: %s::%s: %x\n", networkName, prop.name, offset + prop.offset);
-		}
+		}*/
 	}
 }
 

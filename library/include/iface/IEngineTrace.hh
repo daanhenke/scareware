@@ -9,7 +9,7 @@ namespace sw::iface
 {
 	struct Ray
 	{
-		Ray(Vector& start, Vector& end) : start(start), delta(end - start), _pad0(0), is_ray(true)
+		Ray(Vector& start, Vector& end) : start(start), delta(end - start)
 		{
 			is_swept = delta.x || delta.y || delta.z;
 		}
@@ -66,6 +66,6 @@ namespace sw::iface
 	class IEngineTrace
 	{
 	public:
-		LAZY_MEMBER(TraceRay, void, (Ray& ray, unsigned int mask, TraceFilter& filter, Trace& trace), 5, (this, ray, mask, filter, trace));
+		LAZY_MEMBER(TraceRay, void, (Ray& ray, unsigned int mask, TraceFilter& filter, Trace& trace), 5, (this, std::cref(ray), mask, std::cref(filter), std::ref(trace)));
 	};
 }
