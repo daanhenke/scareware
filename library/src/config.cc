@@ -2,7 +2,7 @@
 #include <fstream>
 #include <stdlib.h>
 #include <Windows.h>
-#include "console.hh""
+#include "console.hh"
 
 fs::path sw::config::ConfigPath;
 Yaml::Node sw::config::ConfigNode;
@@ -42,11 +42,55 @@ void sw::config::UseConfig(fs::path file_path)
 
 	ConfigPath = file_path;
 	Yaml::Parse(ConfigNode, file_path.string());
-	std::string val = GetNode("test", std::string("yeet"));
-	console::WriteColorFormat(FOREGROUND_RED | BACKGROUND_BLUE, val.c_str());
+	SetCurrentConfig();
+}
+
+std::string sw::config::GetStringNode(std::string section, std::string defaultValue)
+{
+	auto result = ConfigNode[section].As<std::string>("");
+	if (result.length() == 0)
+	{
+		ConfigNode[section] = defaultValue;
+		SaveConfig();
+		result = defaultValue;
+	}
+
+	return result;
+}
+
+bool sw::config::GetBoolNode(std::string section, bool defaultValue)
+{
+	auto strval = GetStringNode(section, defaultValue ? "true" : "false");
+	if (strval == "true") return true;
+	if (strval == "false") return false;
+	return defaultValue;
 }
 
 void sw::config::SaveConfig()
 {
 	Yaml::Serialize(ConfigNode, ConfigPath.string().c_str());
+}
+
+
+sw::config::config_t sw::config::CurrentConfig;
+void sw::config::SetCurrentConfig()
+{
+	CurrentConfig = 
+	{
+		.bhop =
+		{
+			.enabled = GetBoolNode("bhop_enabled", true)
+		},
+		.chams =
+		{
+			.enabled = true,
+			.terrorist_color = {1.f, .5f, 0, 0},
+			.counterterrorist_color = {0.f, .5f, 1.f, 0}
+		},
+		.noflash =
+		{
+			.enabled = true,
+			.intensity = .1f
+		},
+	};
 }

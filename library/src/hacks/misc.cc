@@ -5,9 +5,12 @@
 #include "memory.hh"
 #include "util.hh"
 #include "hacks/predict.hh"
+#include "config.hh"
 
 void sw::hacks::misc::Bunnyhop(iface::CUserCmd* cmd)
 {
+    if (! config::CurrentConfig.bhop.enabled) return;
+
     auto localPlayer = sw::interfaces::GetLocalPlayer();
 
     if (!localPlayer) return;

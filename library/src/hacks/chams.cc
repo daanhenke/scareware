@@ -2,6 +2,7 @@
 #include "console.hh"
 #include "iface/KeyValues.hh"
 #include "hooks.hh"
+#include "config.hh"
 
 sw::iface::IMaterial* m_cham_material;
 sw::iface::IMaterial* m_cham_hidden_material;
@@ -14,6 +15,7 @@ void sw::hacks::chams::Initialize()
 
 bool sw::hacks::chams::Render(void* ctx, void* state, iface::ModelRenderInfo& info, iface::matrix3x4* customBoneToWorld)
 {
+	if (!config::CurrentConfig.chams.enabled) return false;
 	auto entity = interfaces::IClientEntityList->GetClientEntity(info.entityIndex);
 	auto isWeapon = false;
 
@@ -34,15 +36,17 @@ bool sw::hacks::chams::Render(void* ctx, void* state, iface::ModelRenderInfo& in
 
 		if (entity->IsPlayer())
 		{
-			if (localPlayer->iTeamNum() == entity->iTeamNum())
+			if (entity->iTeamNum() == (int) iface::Team::TT)
 			{
-				m_cham_material->ColorModulate(.0f, .0f, 1.f);
-				m_cham_hidden_material->ColorModulate(.0f, .5f, 1.f);
+				auto& color = config::CurrentConfig.chams.terrorist_color;
+				m_cham_material->ColorModulate(color.r, color.g, color.b);
+				m_cham_hidden_material->ColorModulate(color.r, color.g, color.b);
 			}
 			else
 			{
-				m_cham_material->ColorModulate(1.f, .0f, 0.f);
-				m_cham_hidden_material->ColorModulate(1.f, .5f, 0.f);
+				auto& color = config::CurrentConfig.chams.counterterrorist_color;
+				m_cham_material->ColorModulate(color.r, color.g, color.b);
+				m_cham_hidden_material->ColorModulate(color.r, color.g, color.b);
 			}
 		}
 		else if (entity->GetClientClass()->classId == iface::ClassId::PlantedC4)

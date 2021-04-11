@@ -20,6 +20,13 @@ namespace sw::iface
         LADDER = 9
     };
 
+    enum class Team {
+        None = 0,
+        Spectators,
+        TT,
+        CT
+    };
+
     enum class ObsMode {
         OBS_MODE_NONE = 0,	// not in spectator mode
         OBS_MODE_DEATHCAM,	// special mode for death cam animation

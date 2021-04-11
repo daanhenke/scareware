@@ -1,7 +1,8 @@
+#define NK_IMPLEMENTATION
 #include "ui/render.hh"
+#include "ui/settings.hh"
 #include "memory.hh"
 
-#define NK_IMPLEMENTATION
 #define NK_INCLUDE_FIXED_TYPES
 #define NK_INCLUDE_STANDARD_IO
 #define NK_INCLUDE_STANDARD_VARARGS
@@ -60,6 +61,8 @@ void sw::ui::render::Render()
             nk_button_label(nuklear_context, "Test!");
         }
         nk_end(nuklear_context);
+
+        settings::Render();
     }
 
     nk_d3d9_render(NK_ANTI_ALIASING_ON);
