@@ -3,6 +3,7 @@
 #include <cstring>
 #include "console.hh"
 #include "hacks/visuals.hh"
+#include "config.hh"
 
 void sw::hacks::skin::FrameStageNotify()
 {
@@ -39,7 +40,7 @@ void sw::hacks::skin::FrameStageNotify()
 
 		if (weaponId == iface::WeaponId::Awp)
 		{
-			weapon->nFallbackPaintKit() = 344;
+			weapon->nFallbackPaintKit() = config::CurrentConfig.skins.awp_skin;
 		}
 
 		if (weaponId == iface::WeaponId::M4A1)

@@ -25,6 +25,7 @@ target_sources(scareware
         src/external/Yaml.cc
         src/ui/render.cc
         src/ui/settings.cc
+        src/ui/presets.cc
  "include/ui/nuklear_d3d9.h")
 
 if (MSVC)

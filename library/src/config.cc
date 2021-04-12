@@ -66,6 +66,16 @@ bool sw::config::GetBoolNode(std::string section, bool defaultValue)
 	return defaultValue;
 }
 
+void sw::config::SetStringNode(std::string section, std::string value)
+{
+	ConfigNode[section] = value;
+}
+
+void sw::config::SetBoolNode(std::string section, bool value)
+{
+	SetStringNode(section, value ? "true" : "false");
+}
+
 void sw::config::SaveConfig()
 {
 	Yaml::Serialize(ConfigNode, ConfigPath.string().c_str());
@@ -85,12 +95,24 @@ void sw::config::SetCurrentConfig()
 		{
 			.enabled = true,
 			.terrorist_color = {1.f, .5f, 0, 0},
-			.counterterrorist_color = {0.f, .5f, 1.f, 0}
+			.terrorist_color_hidden = {1.f, 0, 0, 0},
+			.counterterrorist_color = {0, .5f, 1.f, 0},
+			.counterterrorist_color_hidden = {0, 0, 1.f, 0}
 		},
 		.noflash =
 		{
 			.enabled = true,
 			.intensity = .1f
 		},
+		.skins =
+		{
+			.enabled = true,
+			.awp_skin = 344
+		}
 	};
+}
+
+void sw::config::SyncCurrentConfig()
+{
+	SetBoolNode("bhop_enabled", CurrentConfig.bhop.enabled);
 }

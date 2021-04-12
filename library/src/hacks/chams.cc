@@ -39,14 +39,16 @@ bool sw::hacks::chams::Render(void* ctx, void* state, iface::ModelRenderInfo& in
 			if (entity->iTeamNum() == (int) iface::Team::TT)
 			{
 				auto& color = config::CurrentConfig.chams.terrorist_color;
+				auto& color_hidden = config::CurrentConfig.chams.terrorist_color_hidden;
 				m_cham_material->ColorModulate(color.r, color.g, color.b);
-				m_cham_hidden_material->ColorModulate(color.r, color.g, color.b);
+				m_cham_hidden_material->ColorModulate(color_hidden.r, color_hidden.g, color_hidden.b);
 			}
 			else
 			{
 				auto& color = config::CurrentConfig.chams.counterterrorist_color;
+				auto& color_hidden = config::CurrentConfig.chams.counterterrorist_color_hidden;
 				m_cham_material->ColorModulate(color.r, color.g, color.b);
-				m_cham_hidden_material->ColorModulate(color.r, color.g, color.b);
+				m_cham_hidden_material->ColorModulate(color_hidden.r, color_hidden.g, color_hidden.b);
 			}
 		}
 		else if (entity->GetClientClass()->classId == iface::ClassId::PlantedC4)

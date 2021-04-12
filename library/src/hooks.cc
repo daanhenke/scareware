@@ -203,6 +203,18 @@ long __stdcall es_hook(IDirect3DDevice9* device)
         return oEndScene(device);
     }
 
+    // Save the current rendering state
+    DWORD colorWriteEnable, srgbWriteEnable;
+    IDirect3DVertexDeclaration9* vertex_declaration = nullptr;
+    IDirect3DVertexShader9* vertex_shader = nullptr;
+    IDirect3DStateBlock9* state_block;
+    device->GetRenderState(D3DRS_COLORWRITEENABLE, &colorWriteEnable);
+    device->GetRenderState(D3DRS_SRGBWRITEENABLE, &srgbWriteEnable);
+    device->GetVertexDeclaration(&vertex_declaration);
+    device->GetVertexShader(&vertex_shader);
+    device->CreateStateBlock(D3DSBT_ALL, &state_block);
+    state_block->Capture();
+
     // We are now certain we're rendering to the screen, render ui & shit
     
     // Set up nuklear & wndproc hook if they haven't been set yet
@@ -215,6 +227,13 @@ long __stdcall es_hook(IDirect3DDevice9* device)
     {
         sw::ui::render::Render();
     }
+
+    device->SetRenderState(D3DRS_COLORWRITEENABLE, colorWriteEnable);
+    device->SetRenderState(D3DRS_SRGBWRITEENABLE, srgbWriteEnable);
+    device->SetVertexDeclaration(vertex_declaration);
+    device->SetVertexShader(vertex_shader);
+    state_block->Apply();
+    state_block->Release();
 
     return oEndScene(device);
 }

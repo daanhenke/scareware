@@ -16,6 +16,9 @@ namespace sw::config
 	std::string GetStringNode(std::string section, std::string defaultValue);
 	bool GetBoolNode(std::string section, bool defaultValue);
 
+	void SetStringNode(std::string section, std::string value);
+	void SetBoolNode(std::string section, bool value);
+
 	struct color_t
 	{
 		uint8_t red;
@@ -43,7 +46,9 @@ namespace sw::config
 		{
 			int enabled;
 			nk_colorf terrorist_color;
+			nk_colorf terrorist_color_hidden;
 			nk_colorf counterterrorist_color;
+			nk_colorf counterterrorist_color_hidden;
 		} chams;
 
 		struct
@@ -51,8 +56,15 @@ namespace sw::config
 			int enabled;
 			float intensity;
 		} noflash;
+
+		struct
+		{
+			int enabled;
+			int awp_skin;
+		} skins;
 	} config_t;
 
 	void SetCurrentConfig();
+	void SyncCurrentConfig();
 	extern config_t CurrentConfig;
 }

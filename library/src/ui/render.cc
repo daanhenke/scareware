@@ -1,6 +1,8 @@
+#include "config.hh"
 #define NK_IMPLEMENTATION
 #include "ui/render.hh"
 #include "ui/settings.hh"
+#include "ui/presets.hh"
 #include "memory.hh"
 
 #define NK_INCLUDE_FIXED_TYPES
@@ -55,13 +57,7 @@ void sw::ui::render::Render()
 {
     if (should_render)
     {
-        if (nk_begin(nuklear_context, "Meme Window", nk_rect(50, 50, 220, 220), NK_WINDOW_MOVABLE | NK_WINDOW_TITLE | NK_WINDOW_BORDER))
-        {
-            nk_layout_row_static(nuklear_context, 35, 80, 1);
-            nk_button_label(nuklear_context, "Test!");
-        }
-        nk_end(nuklear_context);
-
+        presets::Render();
         settings::Render();
     }
 

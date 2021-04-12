@@ -3,6 +3,8 @@
 #include <Windows.h>
 #include <d3d9.h>
 
+struct nk_context;
+
 #ifndef NK_IMPLEMENTATION
 #define NK_INCLUDE_FIXED_TYPES
 #define NK_INCLUDE_STANDARD_IO
@@ -13,8 +15,6 @@
 #define NK_INCLUDE_DEFAULT_FONT
 #include "ui/nuklear.h"
 #endif
-
-struct nk_context;
 
 namespace sw::ui::render
 {
